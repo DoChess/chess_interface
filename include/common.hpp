@@ -6,6 +6,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 #include <string>
+#include <bits/stdc++.h>
 #include <sstream>
 
 #include "../include/ltexture.hpp"
