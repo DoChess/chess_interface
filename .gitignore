@@ -1,3 +1,5 @@
+
+### C++ ###
 # Prerequisites
 *.d
 
@@ -30,3 +32,23 @@
 *.exe
 *.out
 *.app
+
+### Vim ###
+# swap
+.sw[a-p]
+.*.sw[a-p]
+# session
+Session.vim
+# temporary
+.netrwhist
+*~
+# auto-generated tag files
+tags
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history
