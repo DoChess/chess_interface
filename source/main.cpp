@@ -21,7 +21,7 @@ LTexture gInfoTexture;
 bool init();
 bool loadMedia();
 void close();
-LTimer controlTime(SDL_Event e, LTimer timer, SDL_Color textColor);
+pair<LTimer, LTimer> controlTime(SDL_Event e, pair<LTimer, LTimer> gameTime, SDL_Color textColor);
 string formatTime(Uint32 mlseconds);
 
 
@@ -51,12 +51,13 @@ int main( int argc, char* args[] )
 			SDL_Color textColor = { 0, 0, 0, 255 };
 
 			//The application timer
-			LTimer timer;
+			LTimer timerDark, timerLight;
 
 			//In memory text stream
-			stringstream timeDark;
-			stringstream timeLight;
-			string fdsa;
+			stringstream currentTimeDark, currentTimeLight;
+			string light, dark;
+			pair<LTimer, LTimer> gameTime;
+
 
 			//While application is running
 			while( !quit )
@@ -72,24 +73,28 @@ int main( int argc, char* args[] )
 					//Reset start time on return keypress
 					else if( e.type == SDL_KEYDOWN )
 					{
-						timer = controlTime(e, timer, textColor);
+						gameTime = controlTime(e, gameTime, textColor);
+						timerLight = gameTime.first;
+						timerDark = gameTime.second;
 					}
 				}
 
 				//Set text to be rendered
-				timeDark.str( "" );
-				timeLight.str( "" );
+				currentTimeDark.str( "" );
+				currentTimeLight.str( "" );
 
-				fdsa = formatTime(timer.getTicks());
-				timeDark << fdsa;
-				timeLight << fdsa; 
+				light = formatTime(gameTime.first.getTicks());
+				dark = formatTime(gameTime.second.getTicks());
+				
+				currentTimeLight << light; 
+				currentTimeDark << dark;
 				
 				//Render text
-				if( !gDarkTimeTexture.loadFromRenderedText( timeDark.str().c_str(), textColor, gRenderer, gFont ) )
+				if( !gDarkTimeTexture.loadFromRenderedText( currentTimeDark.str().c_str(), textColor, gRenderer, gFont ) )
 				{
 					printf( "Unable to render time texture!\n" );
 				}
-				if( !gLightTimeTexture.loadFromRenderedText( timeLight.str().c_str(), textColor, gRenderer, gFont ) )
+				if( !gLightTimeTexture.loadFromRenderedText( currentTimeLight.str().c_str(), textColor, gRenderer, gFont ) )
 				{
 					printf( "Unable to render time texture!\n" );
 				}
@@ -120,21 +125,21 @@ int main( int argc, char* args[] )
 string formatTime(Uint32 mlseconds){
 	stringstream t;
 	int miliseconds = (int) (mlseconds);
-	int seconds = (int) (miliseconds / 1000) % 60 ;
+	int seconds = (int) (miliseconds / 1000) % 60;
 	int minutes = (int) ((miliseconds / (1000*60)) % 60);
 	int hours   = (int) ((miliseconds / (1000*60*60)) % 24);
-	t << hours << " : " << minutes << " : " <<  seconds;
+	t << HOURS - hours << " : " << MINUTES - minutes << " : " << SECONDS - seconds;
 	return t.str();
 }
 
 
-LTimer controlTime(SDL_Event e, LTimer timer, SDL_Color textColor){
-	//Start/stop
+pair<LTimer, LTimer> controlTime(SDL_Event e, pair<LTimer, LTimer> gameTime, SDL_Color textColor){
 	if( e.key.keysym.sym == SDLK_s )
 	{
-		if( timer.isStarted() )
+		if( gameTime.second.isStarted() and gameTime.first.isStarted())
 		{
-			timer.stop();
+			gameTime.second.stop();
+			gameTime.first.stop();
 			cout << "O jogo foi parado" << '\n';
 			if( !gInfoTexture.loadFromRenderedText( "stoped game", textColor, gRenderer, gFont ) )
 			{
@@ -143,7 +148,8 @@ LTimer controlTime(SDL_Event e, LTimer timer, SDL_Color textColor){
 		}
 		else
 		{
-			timer.start();
+			gameTime.first.start();
+			gameTime.second.start();
 			cout << "O jogo comecou" << '\n';
 			if( !gInfoTexture.loadFromRenderedText( "start game", textColor, gRenderer, gFont ) )
 			{
@@ -154,9 +160,10 @@ LTimer controlTime(SDL_Event e, LTimer timer, SDL_Color textColor){
 	//Pause/unpause
 	else if( e.key.keysym.sym == SDLK_p )
 	{
-		if( timer.isPaused() )
+		if( gameTime.second.isPaused() and gameTime.second.isPaused() )
 		{
-			timer.unpause();
+			gameTime.second.unpause();
+			gameTime.first.unpause();
 			cout << "Jogo foi despausado" << '\n';
 			if( !gInfoTexture.loadFromRenderedText( "start game", textColor, gRenderer, gFont ) )
 			{
@@ -165,7 +172,8 @@ LTimer controlTime(SDL_Event e, LTimer timer, SDL_Color textColor){
 		}
 		else
 		{
-			timer.pause();
+			gameTime.first.pause();
+			gameTime.second.pause();
 			cout << "Jogo foi pausado" << '\n';
 			if( !gInfoTexture.loadFromRenderedText( "paused game", textColor, gRenderer, gFont ) )
 			{
@@ -175,14 +183,25 @@ LTimer controlTime(SDL_Event e, LTimer timer, SDL_Color textColor){
 	}
 	else if( e.key.keysym.sym == SDLK_c )
 	{
-		timer.pause();
+		string currentTime;
+		if (gameTime.second.isPaused())
+		{
+			gameTime.second.unpause();
+			gameTime.first.pause();	
+			currentTime = "claro";
+		} else {
+			gameTime.second.pause();
+			gameTime.first.unpause();	
+			currentTime = "escuro";
+		}
 		cout << "Trocou de tempo" << '\n';
-		if( !gInfoTexture.loadFromRenderedText( "Change timer for enemy", textColor, gRenderer, gFont ) )
+		if( !gInfoTexture.loadFromRenderedText( "Eh a vez do rei: " + currentTime, textColor, gRenderer, gFont ) )
 		{
 			printf( "Unable to render time texture!\n" );
 		}
 	}
-	return timer;
+
+	return gameTime;
 }
 
 
