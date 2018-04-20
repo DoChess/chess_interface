@@ -12,11 +12,12 @@ SDL_Renderer* gRenderer = NULL;
 TTF_Font* gFont = NULL;
 TTF_Font* gFontTimer = NULL;
 
+SDL_Texture* loadTexture( std::string path );
+SDL_Texture* gTexture = NULL;
 
 //Scene textures
 LTexture gDarkTimeTexture;
 LTexture gLightTimeTexture;
-LTexture gTexture;
 LTexture gStatusGameTexture;
 LTexture gInfoTexture;
 
@@ -42,7 +43,7 @@ int main( int argc, char* args[] )
 			printf( "Failed to load media!\n" );
 		}
 		else
-		{	
+		{
 			//Main loop flag
 			bool quit = false;
 
@@ -87,10 +88,10 @@ int main( int argc, char* args[] )
 
 				light = formatTime(gameTime.first.getTicks());
 				dark = formatTime(gameTime.second.getTicks());
-				
-				currentTimeLight << light; 
+
+				currentTimeLight << light;
 				currentTimeDark << dark;
-				
+
 				//Render text
 				if( !gDarkTimeTexture.loadFromRenderedText( currentTimeDark.str().c_str(), textColor, gRenderer, gFontTimer ) )
 				{
@@ -104,14 +105,13 @@ int main( int argc, char* args[] )
 				//Clear screen
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( gRenderer );
-				
-				
+
 				//Render textures
 				gInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 4), gRenderer );
 				gStatusGameTexture.render( (SCREEN_WIDTH - gStatusGameTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStatusGameTexture.getHeight()) / 2, gRenderer );
 				gDarkTimeTexture.render( (SCREEN_WIDTH - gDarkTimeTexture.getWidth()) / 8 , (((SCREEN_HEIGHT - gDarkTimeTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - gDarkTimeTexture.getHeight()) / 4), gRenderer );
 				gLightTimeTexture.render( ((SCREEN_WIDTH - gLightTimeTexture.getWidth()) / 2) + ((SCREEN_WIDTH - gLightTimeTexture.getWidth()) / 3) , (((SCREEN_HEIGHT - gLightTimeTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - gLightTimeTexture.getHeight()) / 4), gRenderer );
-				
+
 				//Update screen
 				SDL_RenderPresent( gRenderer );
 			}
@@ -124,7 +124,7 @@ int main( int argc, char* args[] )
 	return 0;
 }
 
-
+//Colocar essa função dentro da classe timer
 string formatTime(Uint32 mlseconds){
 	stringstream t;
 	int miliseconds = (int) (mlseconds);
@@ -175,19 +175,19 @@ pair<LTimer, LTimer> controlTime(SDL_Event e, pair<LTimer, LTimer> gameTime, SDL
 	}
 	else if( e.key.keysym.sym == SDLK_c )
 	{
-		
+
 		if (gameTime.second.isPaused())
 		{
 			gameTime.second.unpause();
-			gameTime.first.pause();	
+			gameTime.first.pause();
 			currentTime = "light";
 		} else {
 			gameTime.second.pause();
-			gameTime.first.unpause();	
+			gameTime.first.unpause();
 			currentTime = "dark";
 		}
 		statusGameText = "Time of ";
-		
+
 	}
 	if( !gInfoTexture.loadFromRenderedText( "chess b1 for c3 move", textColor, gRenderer, gFont ) )
 	{
@@ -253,7 +253,7 @@ bool init()
 					success = false;
 				}
 
-				 //Initialize SDL_ttf
+				//Initialize SDL_ttf
 				if( TTF_Init() == -1 )
 				{
 					printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
@@ -264,6 +264,33 @@ bool init()
 	}
 
 	return success;
+}
+
+SDL_Texture* loadTexture( std::string path )
+{
+    //The final texture
+    SDL_Texture* newTexture = NULL;
+
+    //Load image at specified path
+    SDL_Surface* loadedSurface = IMG_Load( path.c_str() );
+    if( loadedSurface == NULL )
+    {
+        printf( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
+    }
+    else
+    {
+        //Create texture from surface pixels
+        newTexture = SDL_CreateTextureFromSurface( gRenderer, loadedSurface );
+        if( newTexture == NULL )
+        {
+            printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
+        }
+
+        //Get rid of old loaded surface
+        SDL_FreeSurface( loadedSurface );
+    }
+
+    return newTexture;
 }
 
 bool loadMedia()
@@ -283,11 +310,18 @@ bool loadMedia()
 	{
 		//Set text color as black
 		SDL_Color textColor = { 0, 0, 0, 255 };
-		
+
 		//Load stop prompt texture
 		if( !gStatusGameTexture.loadFromRenderedText( "stop", textColor, gRenderer, gFont ) )
 		{
 			printf( "Unable to render start/stop prompt texture!\n" );
+			success = false;
+		}
+
+		gTexture = loadTexture( "../assets/imgs/black_king.png" );
+		if( gTexture == NULL )
+		{
+			printf( "Failed to load texture image!\n" );
 			success = false;
 		}
 
@@ -308,13 +342,15 @@ void close()
 	gDarkTimeTexture.free();
 	gLightTimeTexture.free();
 	gStatusGameTexture.free();
-	gTexture.free();
+
+	SDL_DestroyTexture( gTexture );
+    gTexture = NULL;
 
 	//Free global font
 	TTF_CloseFont( gFont );
 	gFont = NULL;
 
-	//Destroy window	
+	//Destroy window
 	SDL_DestroyRenderer( gRenderer );
 	SDL_DestroyWindow( gWindow );
 	gWindow = NULL;
