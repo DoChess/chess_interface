@@ -8,6 +8,7 @@
 #include <string>
 #include <bits/stdc++.h>
 #include <sstream>
+#include <iomanip>
 
 #include "../include/ltexture.hpp"
 #include "../include/ltimer.hpp"

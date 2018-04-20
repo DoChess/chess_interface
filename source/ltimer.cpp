@@ -1,6 +1,8 @@
-#include "../include/ltimer.hpp"
+#include "../include/common.hpp"
 
-LTimer::LTimer()
+using namespace std;
+
+Player::Player()
 {
     //Initialize the variables
     mStartTicks = 0;
@@ -10,7 +12,7 @@ LTimer::LTimer()
     mStarted = false;
 }
 
-void LTimer::start()
+void Player::start()
 {
     //Start the timer
     mStarted = true;
@@ -23,7 +25,7 @@ void LTimer::start()
 	mPausedTicks = 0;
 }
 
-void LTimer::stop()
+void Player::stop()
 {
     //Stop the timer
     mStarted = false;
@@ -36,7 +38,7 @@ void LTimer::stop()
 	mPausedTicks = 0;
 }
 
-void LTimer::pause()
+void Player::pause()
 {
     //If the timer is running and isn't already paused
     if( mStarted && !mPaused )
@@ -50,7 +52,7 @@ void LTimer::pause()
     }
 }
 
-void LTimer::unpause()
+void Player::unpause()
 {
     //If the timer is running and paused
     if( mStarted && mPaused )
@@ -66,7 +68,17 @@ void LTimer::unpause()
     }
 }
 
-Uint32 LTimer::getTicks()
+string formatTime(Uint32 mlseconds){
+	stringstream t;
+	int miliseconds = (int) (mlseconds);
+	int seconds = (int) (miliseconds / 1000) % 60;
+	int minutes = (int) ((miliseconds / (1000*60)) % 60);
+	int hours   = (int) ((miliseconds / (1000*60*60)) % 24);
+	t << setfill('0') << setw(2) << HOURS - hours << ":" << setfill('0') << setw(2) << MINUTES - minutes << ":" << setfill('0') << setw(2) << SECONDS - seconds;
+	return t.str();
+}
+
+string Player::showCurrentTime()
 {
 	//The actual timer time
 	Uint32 time = 0;
@@ -87,17 +99,18 @@ Uint32 LTimer::getTicks()
         }
     }
 
-    return time;
+    return formatTime(time);
 }
 
-bool LTimer::isStarted()
+bool Player::isStarted()
 {
 	//Timer is running and paused or unpaused
     return mStarted;
 }
 
-bool LTimer::isPaused()
+bool Player::isPaused()
 {
 	//Timer is running and paused
     return mPaused && mStarted;
 }
+

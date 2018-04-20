@@ -16,17 +16,25 @@ SDL_Texture* loadTexture( std::string path );
 SDL_Texture* gTexture = NULL;
 
 //Scene textures
-LTexture gDarkTimeTexture;
-LTexture gLightTimeTexture;
+LTexture playerTimeDarkTexture;
+LTexture playerTimeLightTexture;
+//LTexture playerFailuresDarkTexture;
+//LTexture playerFailuresLightTexture;
 LTexture gStatusGameTexture;
 LTexture gInfoTexture;
 
 bool init();
 bool loadMedia();
 void close();
-pair<LTimer, LTimer> controlTime(SDL_Event e, pair<LTimer, LTimer> gameTime, SDL_Color textColor);
-string formatTime(Uint32 mlseconds);
+pair<Player, Player> controlTime(SDL_Event e, pair<Player, Player> players, SDL_Color textColor);
 
+void renderElements(){
+	//Render textures
+	gInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 4), gRenderer );
+	gStatusGameTexture.render( (SCREEN_WIDTH - gStatusGameTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStatusGameTexture.getHeight()) / 2, gRenderer );
+	playerTimeDarkTexture.render( (SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 8 , (((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight()) / 4), gRenderer );
+	playerTimeLightTexture.render( ((SCREEN_WIDTH - playerTimeLightTexture.getWidth()) / 2) + ((SCREEN_WIDTH - playerTimeLightTexture.getWidth()) / 3) , (((SCREEN_HEIGHT - playerTimeLightTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeLightTexture.getHeight()) / 4), gRenderer );
+}
 
 int main( int argc, char* args[] )
 {
@@ -54,12 +62,11 @@ int main( int argc, char* args[] )
 			SDL_Color textColor = { 0, 0, 0, 255 };
 
 			//The application timer
-			LTimer timerDark, timerLight;
+			Player lightPlayer, darkPlayer;
 
 			//In memory text stream
-			stringstream currentTimeDark, currentTimeLight;
 			string light, dark;
-			pair<LTimer, LTimer> gameTime (timerLight, timerDark);
+			pair<Player, Player> players (lightPlayer, darkPlayer);
 
 
 			//While application is running
@@ -76,28 +83,18 @@ int main( int argc, char* args[] )
 					//Reset start time on return keypress
 					else if( e.type == SDL_KEYDOWN )
 					{
-						gameTime = controlTime(e, gameTime, textColor);
-						timerLight = gameTime.first;
-						timerDark = gameTime.second;
+						players = controlTime(e, players, textColor);
+						lightPlayer = players.first;
+						darkPlayer = players.second;
 					}
 				}
 
-				//Set text to be rendered
-				currentTimeDark.str( "" );
-				currentTimeLight.str( "" );
-
-				light = formatTime(gameTime.first.getTicks());
-				dark = formatTime(gameTime.second.getTicks());
-
-				currentTimeLight << light;
-				currentTimeDark << dark;
-
 				//Render text
-				if( !gDarkTimeTexture.loadFromRenderedText( currentTimeDark.str().c_str(), textColor, gRenderer, gFontTimer ) )
+				if( !playerTimeDarkTexture.loadFromRenderedText( players.first.showCurrentTime(), textColor, gRenderer, gFontTimer ) )
 				{
 					printf( "Unable to render time texture!\n" );
 				}
-				if( !gLightTimeTexture.loadFromRenderedText( currentTimeLight.str().c_str(), textColor, gRenderer, gFontTimer ) )
+				if( !playerTimeLightTexture.loadFromRenderedText( players.second.showCurrentTime(), textColor, gRenderer, gFontTimer ) )
 				{
 					printf( "Unable to render time texture!\n" );
 				}
@@ -106,12 +103,7 @@ int main( int argc, char* args[] )
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( gRenderer );
 
-				//Render textures
-				gInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 4), gRenderer );
-				gStatusGameTexture.render( (SCREEN_WIDTH - gStatusGameTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStatusGameTexture.getHeight()) / 2, gRenderer );
-				gDarkTimeTexture.render( (SCREEN_WIDTH - gDarkTimeTexture.getWidth()) / 8 , (((SCREEN_HEIGHT - gDarkTimeTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - gDarkTimeTexture.getHeight()) / 4), gRenderer );
-				gLightTimeTexture.render( ((SCREEN_WIDTH - gLightTimeTexture.getWidth()) / 2) + ((SCREEN_WIDTH - gLightTimeTexture.getWidth()) / 3) , (((SCREEN_HEIGHT - gLightTimeTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - gLightTimeTexture.getHeight()) / 4), gRenderer );
-
+				renderElements();
 				//Update screen
 				SDL_RenderPresent( gRenderer );
 			}
@@ -124,34 +116,25 @@ int main( int argc, char* args[] )
 	return 0;
 }
 
-//Colocar essa função dentro da classe timer
-string formatTime(Uint32 mlseconds){
-	stringstream t;
-	int miliseconds = (int) (mlseconds);
-	int seconds = (int) (miliseconds / 1000) % 60;
-	int minutes = (int) ((miliseconds / (1000*60)) % 60);
-	int hours   = (int) ((miliseconds / (1000*60*60)) % 24);
-	t << setfill('0') << setw(2) << HOURS - hours << ":" << setfill('0') << setw(2) << MINUTES - minutes << ":" << setfill('0') << setw(2) << SECONDS - seconds;
-	return t.str();
-}
 
 
-pair<LTimer, LTimer> controlTime(SDL_Event e, pair<LTimer, LTimer> gameTime, SDL_Color textColor){
+
+pair<Player, Player> controlTime(SDL_Event e, pair<Player, Player> players, SDL_Color textColor){
 	string currentTime = "";
 	string statusGameText = "";
 	if( e.key.keysym.sym == SDLK_s )
 	{
-		if( gameTime.second.isStarted() and gameTime.first.isStarted())
+		if( players.second.isStarted() and players.first.isStarted())
 		{
-			gameTime.second.stop();
-			gameTime.first.stop();
+			players.second.stop();
+			players.first.stop();
 			statusGameText = "stoped game";
 		}
 		else
 		{
-			gameTime.first.start();
-			gameTime.second.start();
-			gameTime.first.pause();
+			players.first.start();
+			players.second.start();
+			players.first.pause();
 			statusGameText = "start game";
 		}
 		currentTime = "";
@@ -159,16 +142,16 @@ pair<LTimer, LTimer> controlTime(SDL_Event e, pair<LTimer, LTimer> gameTime, SDL
 	//Pause/unpause
 	else if( e.key.keysym.sym == SDLK_p )
 	{
-		if( gameTime.second.isPaused() and gameTime.second.isPaused() )
+		if( players.second.isPaused() and players.second.isPaused() )
 		{
-			gameTime.second.unpause();
-			gameTime.first.unpause();
+			players.second.unpause();
+			players.first.unpause();
 			statusGameText = "restart game";
 		}
 		else
 		{
-			gameTime.first.pause();
-			gameTime.second.pause();
+			players.first.pause();
+			players.second.pause();
 			statusGameText = "paused game";
 		}
 		currentTime = "";
@@ -176,14 +159,14 @@ pair<LTimer, LTimer> controlTime(SDL_Event e, pair<LTimer, LTimer> gameTime, SDL
 	else if( e.key.keysym.sym == SDLK_c )
 	{
 
-		if (gameTime.second.isPaused())
+		if (players.second.isPaused())
 		{
-			gameTime.second.unpause();
-			gameTime.first.pause();
+			players.second.unpause();
+			players.first.pause();
 			currentTime = "light";
 		} else {
-			gameTime.second.pause();
-			gameTime.first.unpause();
+			players.second.pause();
+			players.first.unpause();
 			currentTime = "dark";
 		}
 		statusGameText = "Time of ";
@@ -198,7 +181,7 @@ pair<LTimer, LTimer> controlTime(SDL_Event e, pair<LTimer, LTimer> gameTime, SDL
 		printf( "Unable to render time texture!\n" );
 	}
 
-	return gameTime;
+	return players;
 }
 
 
@@ -339,8 +322,8 @@ bool loadMedia()
 void close()
 {
 	//Free loaded images
-	gDarkTimeTexture.free();
-	gLightTimeTexture.free();
+	playerTimeDarkTexture.free();
+	playerTimeLightTexture.free();
 	gStatusGameTexture.free();
 
 	SDL_DestroyTexture( gTexture );

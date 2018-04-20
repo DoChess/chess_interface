@@ -6,11 +6,11 @@
 #include <sstream>
 
 //The application time based timer
-class LTimer
+class Player
 {
     public:
 		//Initializes variables
-		LTimer();
+		Player();
 
 		//The various clock actions
 		void start();
@@ -19,7 +19,7 @@ class LTimer
 		void unpause();
 
 		//Gets the timer's time
-		Uint32 getTicks();
+		std::string showCurrentTime();
 
 		//Checks the status of the timer
 		bool isStarted();
