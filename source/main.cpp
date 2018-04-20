@@ -1,6 +1,7 @@
 //Using SDL, SDL_image, SDL_ttf, standard IO, strings, and string streams
 #include "../include/common.hpp"
 
+using namespace std;
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
 
@@ -9,15 +10,22 @@ SDL_Renderer* gRenderer = NULL;
 
 //Globally used font
 TTF_Font* gFont = NULL;
+TTF_Font* gFontTimer = NULL;
+
 
 //Scene textures
-LTexture gTimeTextTexture;
-LTexture gPausePromptTexture;
-LTexture gStartPromptTexture;
+LTexture gDarkTimeTexture;
+LTexture gLightTimeTexture;
+LTexture gTexture;
+LTexture gStatusGameTexture;
+LTexture gInfoTexture;
 
 bool init();
 bool loadMedia();
 void close();
+pair<LTimer, LTimer> controlTime(SDL_Event e, pair<LTimer, LTimer> gameTime, SDL_Color textColor);
+string formatTime(Uint32 mlseconds);
+
 
 int main( int argc, char* args[] )
 {
@@ -45,10 +53,13 @@ int main( int argc, char* args[] )
 			SDL_Color textColor = { 0, 0, 0, 255 };
 
 			//The application timer
-			LTimer timer;
+			LTimer timerDark, timerLight;
 
 			//In memory text stream
-			std::stringstream timeText;
+			stringstream currentTimeDark, currentTimeLight;
+			string light, dark;
+			pair<LTimer, LTimer> gameTime (timerLight, timerDark);
+
 
 			//While application is running
 			while( !quit )
@@ -64,44 +75,28 @@ int main( int argc, char* args[] )
 					//Reset start time on return keypress
 					else if( e.type == SDL_KEYDOWN )
 					{
-						//Start/stop
-						if( e.key.keysym.sym == SDLK_s )
-						{
-							if( timer.isStarted() )
-							{
-								timer.stop();
-							}
-							else
-							{
-								timer.start();
-							}
-						}
-						//Pause/unpause
-						else if( e.key.keysym.sym == SDLK_p )
-						{
-							if( timer.isPaused() )
-							{
-								timer.unpause();
-							}
-							else
-							{
-								timer.pause();
-							}
-						}
+						gameTime = controlTime(e, gameTime, textColor);
+						timerLight = gameTime.first;
+						timerDark = gameTime.second;
 					}
 				}
 
 				//Set text to be rendered
-				timeText.str( "" );
+				currentTimeDark.str( "" );
+				currentTimeLight.str( "" );
 
-				int miliseconds = (int) (timer.getTicks());
-				int seconds = (int) (timer.getTicks() / 1000) % 60 ;
-				int minutes = (int) ((timer.getTicks() / (1000*60)) % 60);
-				int hours   = (int) ((timer.getTicks() / (1000*60*60)) % 24);
-				timeText << hours << " : " << minutes << " : " <<  seconds; 
-
+				light = formatTime(gameTime.first.getTicks());
+				dark = formatTime(gameTime.second.getTicks());
+				
+				currentTimeLight << light; 
+				currentTimeDark << dark;
+				
 				//Render text
-				if( !gTimeTextTexture.loadFromRenderedText( timeText.str().c_str(), textColor, gRenderer, gFont ) )
+				if( !gDarkTimeTexture.loadFromRenderedText( currentTimeDark.str().c_str(), textColor, gRenderer, gFontTimer ) )
+				{
+					printf( "Unable to render time texture!\n" );
+				}
+				if( !gLightTimeTexture.loadFromRenderedText( currentTimeLight.str().c_str(), textColor, gRenderer, gFontTimer ) )
 				{
 					printf( "Unable to render time texture!\n" );
 				}
@@ -109,12 +104,14 @@ int main( int argc, char* args[] )
 				//Clear screen
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( gRenderer );
-
+				
+				
 				//Render textures
-				//gStartPromptTexture.render( ( SCREEN_WIDTH - gStartPromptTexture.getWidth() ) / 2, 0 );
-				//gPausePromptTexture.render( ( SCREEN_WIDTH - gPausePromptTexture.getWidth() ) / 2, SCREEN_HEIGHT - gStartPromptTexture.getHeight() );
-				gTimeTextTexture.render( ( SCREEN_WIDTH - gTimeTextTexture.getWidth() ) / 2, ( SCREEN_HEIGHT - gTimeTextTexture.getHeight() ) / 2, gRenderer );
-
+				gInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 4), gRenderer );
+				gStatusGameTexture.render( (SCREEN_WIDTH - gStatusGameTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStatusGameTexture.getHeight()) / 2, gRenderer );
+				gDarkTimeTexture.render( (SCREEN_WIDTH - gDarkTimeTexture.getWidth()) / 8 , (((SCREEN_HEIGHT - gDarkTimeTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - gDarkTimeTexture.getHeight()) / 4), gRenderer );
+				gLightTimeTexture.render( ((SCREEN_WIDTH - gLightTimeTexture.getWidth()) / 2) + ((SCREEN_WIDTH - gLightTimeTexture.getWidth()) / 3) , (((SCREEN_HEIGHT - gLightTimeTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - gLightTimeTexture.getHeight()) / 4), gRenderer );
+				
 				//Update screen
 				SDL_RenderPresent( gRenderer );
 			}
@@ -128,7 +125,81 @@ int main( int argc, char* args[] )
 }
 
 
+string formatTime(Uint32 mlseconds){
+	stringstream t;
+	int miliseconds = (int) (mlseconds);
+	int seconds = (int) (miliseconds / 1000) % 60;
+	int minutes = (int) ((miliseconds / (1000*60)) % 60);
+	int hours   = (int) ((miliseconds / (1000*60*60)) % 24);
+	t << setfill('0') << setw(2) << HOURS - hours << ":" << setfill('0') << setw(2) << MINUTES - minutes << ":" << setfill('0') << setw(2) << SECONDS - seconds;
+	return t.str();
+}
 
+
+pair<LTimer, LTimer> controlTime(SDL_Event e, pair<LTimer, LTimer> gameTime, SDL_Color textColor){
+	string currentTime = "";
+	string statusGameText = "";
+	if( e.key.keysym.sym == SDLK_s )
+	{
+		if( gameTime.second.isStarted() and gameTime.first.isStarted())
+		{
+			gameTime.second.stop();
+			gameTime.first.stop();
+			statusGameText = "stoped game";
+		}
+		else
+		{
+			gameTime.first.start();
+			gameTime.second.start();
+			gameTime.first.pause();
+			statusGameText = "start game";
+		}
+		currentTime = "";
+	}
+	//Pause/unpause
+	else if( e.key.keysym.sym == SDLK_p )
+	{
+		if( gameTime.second.isPaused() and gameTime.second.isPaused() )
+		{
+			gameTime.second.unpause();
+			gameTime.first.unpause();
+			statusGameText = "restart game";
+		}
+		else
+		{
+			gameTime.first.pause();
+			gameTime.second.pause();
+			statusGameText = "paused game";
+		}
+		currentTime = "";
+	}
+	else if( e.key.keysym.sym == SDLK_c )
+	{
+		
+		if (gameTime.second.isPaused())
+		{
+			gameTime.second.unpause();
+			gameTime.first.pause();	
+			currentTime = "light";
+		} else {
+			gameTime.second.pause();
+			gameTime.first.unpause();	
+			currentTime = "dark";
+		}
+		statusGameText = "Time of ";
+		
+	}
+	if( !gInfoTexture.loadFromRenderedText( "chess b1 for c3 move", textColor, gRenderer, gFont ) )
+	{
+		printf( "Unable to render time texture!\n" );
+	}
+	if( !gStatusGameTexture.loadFromRenderedText( statusGameText + currentTime, textColor, gRenderer, gFont ) )
+	{
+		printf( "Unable to render time texture!\n" );
+	}
+
+	return gameTime;
+}
 
 
 
@@ -201,7 +272,8 @@ bool loadMedia()
 	bool success = true;
 
 	//Open the font
-	gFont = TTF_OpenFont( "../assets/font/lazy.ttf", 28 );
+	gFontTimer = TTF_OpenFont( "../assets/font/lazy.ttf", 70 );
+	gFont = TTF_OpenFont( "../assets/font/lemon.ttf", 30 );
 	if( gFont == NULL )
 	{
 		printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
@@ -213,16 +285,16 @@ bool loadMedia()
 		SDL_Color textColor = { 0, 0, 0, 255 };
 		
 		//Load stop prompt texture
-		if( !gStartPromptTexture.loadFromRenderedText( "Press S to Start or Stop the Timer", textColor, gRenderer, gFont ) )
+		if( !gStatusGameTexture.loadFromRenderedText( "stop", textColor, gRenderer, gFont ) )
 		{
 			printf( "Unable to render start/stop prompt texture!\n" );
 			success = false;
 		}
-		
+
 		//Load pause prompt texture
-		if( !gPausePromptTexture.loadFromRenderedText( "Press P to Pause or Unpause the Timer", textColor, gRenderer, gFont ) )
+		if( !gInfoTexture.loadFromRenderedText( "Chess", textColor, gRenderer, gFont ) )
 		{
-			printf( "Unable to render pause/unpause prompt texture!\n" );
+			printf( "Unable to render information texture!\n" );
 			success = false;
 		}
 	}
@@ -233,9 +305,10 @@ bool loadMedia()
 void close()
 {
 	//Free loaded images
-	gTimeTextTexture.free();
-	gStartPromptTexture.free();
-	gPausePromptTexture.free();
+	gDarkTimeTexture.free();
+	gLightTimeTexture.free();
+	gStatusGameTexture.free();
+	gTexture.free();
 
 	//Free global font
 	TTF_CloseFont( gFont );

@@ -6,6 +6,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 #include <string>
+#include <bits/stdc++.h>
 #include <sstream>
 
 #include "../include/ltexture.hpp"
@@ -14,5 +15,8 @@
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
+const int HOURS = 0;
+const int MINUTES = 0;
+const int SECONDS = 15;
 
 #endif
