@@ -4,7 +4,7 @@ OBJFOLDER := obj/
 SRCFOLDER := source/
 
 CC := g++
-CFLAGS := -Wall -ansi
+CFLAGS := -std=c++11 -Wall -ansi -Wshadow
 LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf
 
 SRCFILES := $(wildcard source/*.cpp)
