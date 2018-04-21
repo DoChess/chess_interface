@@ -1,8 +1,9 @@
 #include "../include/common.hpp"
+#include "../include/timer.hpp"
 
 using namespace std;
 
-Player::Player()
+Timer::Timer()
 {
     //Initialize the variables
     mStartTicks = 0;
@@ -12,7 +13,7 @@ Player::Player()
     mStarted = false;
 }
 
-void Player::start()
+void Timer::start()
 {
     //Start the timer
     mStarted = true;
@@ -25,7 +26,7 @@ void Player::start()
 	mPausedTicks = 0;
 }
 
-void Player::stop()
+void Timer::stop()
 {
     //Stop the timer
     mStarted = false;
@@ -38,7 +39,7 @@ void Player::stop()
 	mPausedTicks = 0;
 }
 
-void Player::pause()
+void Timer::pause()
 {
     //If the timer is running and isn't already paused
     if( mStarted && !mPaused )
@@ -52,7 +53,7 @@ void Player::pause()
     }
 }
 
-void Player::unpause()
+void Timer::unpause()
 {
     //If the timer is running and paused
     if( mStarted && mPaused )
@@ -69,16 +70,16 @@ void Player::unpause()
 }
 
 string formatTime(Uint32 mlseconds){
-	stringstream t;
+	stringstream time;
 	int miliseconds = (int) (mlseconds);
 	int seconds = (int) (miliseconds / 1000) % 60;
 	int minutes = (int) ((miliseconds / (1000*60)) % 60);
 	int hours   = (int) ((miliseconds / (1000*60*60)) % 24);
-	t << setfill('0') << setw(2) << HOURS - hours << ":" << setfill('0') << setw(2) << MINUTES - minutes << ":" << setfill('0') << setw(2) << SECONDS - seconds;
-	return t.str();
+	time << setfill('0') << setw(2) << HOURS - hours << ":" << setfill('0') << setw(2) << MINUTES - minutes << ":" << setfill('0') << setw(2) << SECONDS - seconds;
+	return time.str();
 }
 
-string Player::showCurrentTime()
+string Timer::showCurrentTime()
 {
 	//The actual timer time
 	Uint32 time = 0;
@@ -102,15 +103,28 @@ string Player::showCurrentTime()
     return formatTime(time);
 }
 
-bool Player::isStarted()
+bool Timer::isStarted()
 {
 	//Timer is running and paused or unpaused
     return mStarted;
 }
 
-bool Player::isPaused()
+bool Timer::isPaused()
 {
 	//Timer is running and paused
     return mPaused && mStarted;
 }
 
+string Timer::statusTimer(){
+    string status;
+    if(isStarted()){
+        if(isPaused()){
+            status = "Paused";
+        } else {
+            status = "Running";
+        }
+    } else {
+        status = "Stoped";
+    }
+    return status;
+}

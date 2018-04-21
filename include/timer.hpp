@@ -1,29 +1,28 @@
+#ifndef TIMER_h
+#define TIMER_h
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-#include <stdio.h>
-#include <string>
+#include <bits/stdc++.h>
 #include <sstream>
+#include <iomanip>
 
-//The application time based timer
-class Player
+class Timer
 {
     public:
 		//Initializes variables
-		Player();
-
-		//The various clock actions
+		Timer();
+	
 		void start();
 		void stop();
 		void pause();
 		void unpause();
 
-		//Gets the timer's time
-		std::string showCurrentTime();
-
-		//Checks the status of the timer
 		bool isStarted();
 		bool isPaused();
+        std::string showCurrentTime();
+        std::string statusTimer();
 
     private:
 		//The clock time when the timer started
@@ -36,3 +35,5 @@ class Player
 		bool mPaused;
 		bool mStarted;
 };
+
+#endif
