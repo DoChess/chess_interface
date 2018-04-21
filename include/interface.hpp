@@ -22,12 +22,16 @@ public:
     void setStatusGame(string status);
     string getStatusGame();
 
+    void setLightCurrentPlayer(bool currentPlayer);
+    bool isLightCurrentPlayer();
+
     pair<Player, Player> controlTime(SDL_Event e, pair<Player, Player> players, 
         SDL_Color textColor, Interface* interface);
     
 private:
     string informationGame;
     string statusGame;
+    bool lightCurrentPlayer;
 };
 
 #endif

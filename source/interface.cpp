@@ -6,6 +6,7 @@ Interface::Interface()
 {
     informationGame = "Chess Game";
     statusGame = "Stoped";
+	lightCurrentPlayer = true;
 }
 
 void Interface::setStatusGame(string status)
@@ -16,6 +17,16 @@ void Interface::setStatusGame(string status)
 string Interface::getStatusGame()
 {
     return statusGame;
+}
+
+void Interface::setLightCurrentPlayer(bool currentPlayer)
+{
+    lightCurrentPlayer = currentPlayer;
+}
+
+bool Interface::isLightCurrentPlayer()
+{
+    return lightCurrentPlayer;
 }
 
 void Interface::setInformation(string info)
@@ -58,10 +69,10 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 		cout << currentTime << " " << players.first.timer.isPaused() << " " << players.second.timer.isPaused() << endl;
 		if( players.first.timer.isPaused() and players.second.timer.isPaused() )
 		{
-			if(currentTime=="light"){
-				players.second.timer.unpause();
-			} else {
+			if(interface->isLightCurrentPlayer()){
 				players.first.timer.unpause();
+			} else {
+				players.second.timer.unpause();
 			}
 			statusGameText = "restart game";
 		}
@@ -80,13 +91,15 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 		{
 			players.second.timer.unpause();
 			players.first.timer.pause();
-			currentTime = "dark";
 			players.first.setFault();
+			
+			interface->setLightCurrentPlayer(false);
 		} else {
 			players.second.timer.pause();
 			players.first.timer.unpause();
-			currentTime = "light";
 			players.second.setFault();
+
+			interface->setLightCurrentPlayer(true);
 		}
 		statusGameText = "Time of ";
 
