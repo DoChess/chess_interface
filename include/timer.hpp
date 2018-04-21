@@ -11,9 +11,8 @@
 class Timer
 {
     public:
-		//Initializes variables
 		Timer();
-	
+
 		void start();
 		void stop();
 		void pause();
@@ -21,19 +20,15 @@ class Timer
 
 		bool isStarted();
 		bool isPaused();
+		
         std::string showCurrentTime();
-        std::string statusTimer();
 
     private:
-		//The clock time when the timer started
-		Uint32 mStartTicks;
+		Uint32 gameStartTicks;
+		Uint32 gamePausedTicks;
 
-		//The ticks stored when the timer was paused
-		Uint32 mPausedTicks;
-
-		//The timer status
-		bool mPaused;
-		bool mStarted;
+		bool gamePaused;
+		bool gameStarted;
 };
 
 #endif

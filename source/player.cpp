@@ -13,9 +13,12 @@ void Player::setFault()
     faults -= 1;
 }
 
-short int Player::getFaults()
+// TO DO - Improve name of faults_format
+string Player::getFaults()
 {
-    return faults;
+    stringstream faults_format;
+    faults_format << faults;
+    return faults_format.str();
 }
 
 bool Player::lostGamePerFault()
@@ -23,7 +26,9 @@ bool Player::lostGamePerFault()
     if(faults >= 0)
     {
         return false;
-    } else {
+    } 
+    else 
+    {
         return true;
     }
 }

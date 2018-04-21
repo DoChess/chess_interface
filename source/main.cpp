@@ -1,6 +1,7 @@
 //Using SDL, SDL_image, SDL_ttf, standard IO, strings, and string streams
 #include "../include/common.hpp"
 #include "../include/player.hpp"
+#include "../include/interface.hpp"
 
 using namespace std;
 //The window we'll be rendering to
@@ -27,7 +28,33 @@ LTexture gInfoTexture;
 bool init();
 bool loadMedia();
 void close();
-pair<Player, Player> controlTime(SDL_Event e, pair<Player, Player> players, SDL_Color textColor);
+
+void renderTexts(pair<Player, Player> players, Interface* interface ,SDL_Color textColor){
+	if( !playerTimeDarkTexture.loadFromRenderedText( players.first.timer.showCurrentTime(), textColor, gRenderer, gFontTimer ) )
+	{
+		printf( "Unable to render time texture!\n" );
+	}
+	if( !playerTimeLightTexture.loadFromRenderedText( players.second.timer.showCurrentTime(), textColor, gRenderer, gFontTimer ) )
+	{
+		printf( "Unable to render time texture!\n" );
+	}
+	if( !playerFailuresDarkTexture.loadFromRenderedText( players.first.getFaults(), textColor, gRenderer, gFont ) )
+	{
+		printf( "Unable to render time texture!\n" );
+	}
+	if( !playerFailuresLightTexture.loadFromRenderedText( players.second.getFaults(), textColor, gRenderer, gFont ) )
+	{
+		printf( "Unable to render time texture!\n" );
+	}
+	if( !gStatusGameTexture.loadFromRenderedText( interface->getStatusGame(), textColor, gRenderer, gFont ) )
+	{
+		printf( "Unable to render time texture!\n" );
+	}
+	if( !gInfoTexture.loadFromRenderedText( interface->getInformation(), textColor, gRenderer, gFont ) )
+	{
+		printf( "Unable to render time texture!\n" );
+	}
+}
 
 void renderElements(){
 	//Render textures
@@ -67,6 +94,7 @@ int main( int argc, char* args[] )
 
 			//The application timer
 			Player lightPlayer, darkPlayer;
+			Interface interface;
 
 			//In memory text stream
 			string light, dark;
@@ -87,22 +115,13 @@ int main( int argc, char* args[] )
 					//Reset start time on return keypress
 					else if( e.type == SDL_KEYDOWN )
 					{
-						players = controlTime(e, players, textColor);
+						players = interface.controlTime(e, players, textColor, &interface);
 						lightPlayer = players.first;
 						darkPlayer = players.second;
-					}
+					} 
 				}
+				renderTexts(players, &interface, textColor);
 				
-				//Render text
-				if( !playerTimeDarkTexture.loadFromRenderedText( players.first.timer.showCurrentTime(), textColor, gRenderer, gFontTimer ) )
-				{
-					printf( "Unable to render time texture!\n" );
-				}
-				if( !playerTimeLightTexture.loadFromRenderedText( players.second.timer.showCurrentTime(), textColor, gRenderer, gFontTimer ) )
-				{
-					printf( "Unable to render time texture!\n" );
-				}
-
 				//Clear screen
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( gRenderer );
@@ -118,100 +137,6 @@ int main( int argc, char* args[] )
 	close();
 
 	return 0;
-}
-
-pair<Player, Player> controlTime(SDL_Event e, pair<Player, Player> players, SDL_Color textColor){
-	string currentTime = "";
-	string statusGameText = "";
-
-	if( e.key.keysym.sym == SDLK_s )
-	{
-		if( players.second.timer.isStarted() and players.first.timer.isStarted())
-		{
-			players.second.timer.stop();
-			players.first.timer.stop();
-			statusGameText = "stoped game";
-		}
-		else
-		{
-			players.first.timer.start();
-			players.second.timer.start();
-			players.second.timer.pause();
-			currentTime = "light";
-			statusGameText = "start game";
-			cout << currentTime << " " << players.first.timer.isPaused() << " " << players.second.timer.isPaused() << endl;
-		}
-		currentTime = "";
-	}
-	//Pause/unpause
-	else if( e.key.keysym.sym == SDLK_p )
-	{
-		cout << currentTime << " " << players.first.timer.isPaused() << " " << players.second.timer.isPaused() << endl;
-		if( players.first.timer.isPaused() and players.second.timer.isPaused() )
-		{
-			if(currentTime=="light"){
-				players.second.timer.unpause();
-			} else {
-				players.first.timer.unpause();
-			}
-			statusGameText = "restart game";
-		}
-		else
-		{
-			players.first.timer.pause();
-			players.second.timer.pause();
-			statusGameText = "paused game";
-		}
-		currentTime = "";
-	}
-	else if( e.key.keysym.sym == SDLK_c )
-	{
-
-		if (players.second.timer.isPaused())
-		{
-			players.second.timer.unpause();
-			players.first.timer.pause();
-			currentTime = "dark";
-			players.first.setFault();
-		} else {
-			players.second.timer.pause();
-			players.first.timer.unpause();
-			currentTime = "light";
-			players.second.setFault();
-		}
-		statusGameText = "Time of ";
-
-	}
-	if(players.first.lostGamePerFault())
-	{
-		statusGameText = "O primeiro perdeu";
-	} else if (players.second.lostGamePerFault())
-	{
-		statusGameText = "O segundo perdeu";
-	}
-
-	if( !gInfoTexture.loadFromRenderedText( "chess b1 for c3 move", textColor, gRenderer, gFont ) )
-	{
-		printf( "Unable to render time texture!\n" );
-	}
-	if( !gStatusGameTexture.loadFromRenderedText( statusGameText + currentTime, textColor, gRenderer, gFont ) )
-	{
-		printf( "Unable to render time texture!\n" );
-	}
-	stringstream firstPlayerFaults, secondPlayerFaults;
-	firstPlayerFaults << players.first.getFaults();
-	secondPlayerFaults << players.second.getFaults();
-	if( !playerFailuresDarkTexture.loadFromRenderedText( firstPlayerFaults.str(), textColor, gRenderer, gFont ) )
-	{
-		printf( "Unable to render time texture!\n" );
-	}
-	if( !playerFailuresLightTexture.loadFromRenderedText( secondPlayerFaults.str(), textColor, gRenderer, gFont ) )
-	{
-		printf( "Unable to render time texture!\n" );
-	}
-
-
-	return players;
 }
 
 bool init()
@@ -334,7 +259,7 @@ bool loadMedia()
 		}
 
 		//Load pause prompt texture
-		if( !gInfoTexture.loadFromRenderedText( "Chess", textColor, gRenderer, gFont ) )
+		if( !gInfoTexture.loadFromRenderedText( "Chess Game", textColor, gRenderer, gFont ) )
 		{
 			printf( "Unable to render information texture!\n" );
 			success = false;

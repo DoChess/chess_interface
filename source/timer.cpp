@@ -5,67 +5,50 @@ using namespace std;
 
 Timer::Timer()
 {
-    //Initialize the variables
-    mStartTicks = 0;
-    mPausedTicks = 0;
+    gameStartTicks = 0;
+    gamePausedTicks = 0;
 
-    mPaused = false;
-    mStarted = false;
+    gamePaused = false;
+    gameStarted = false;
 }
 
 void Timer::start()
 {
-    //Start the timer
-    mStarted = true;
+    gameStarted = true;
 
-    //Unpause the timer
-    mPaused = false;
+    gamePaused = false;
 
-    //Get the current clock time
-    mStartTicks = SDL_GetTicks();
-	mPausedTicks = 0;
+    gameStartTicks = SDL_GetTicks();
+	gamePausedTicks = 0;
 }
 
 void Timer::stop()
 {
-    //Stop the timer
-    mStarted = false;
+    gameStarted = false;
 
-    //Unpause the timer
-    mPaused = false;
+    gamePaused = false;
 
-	//Clear tick variables
-	mStartTicks = 0;
-	mPausedTicks = 0;
+	gameStartTicks = 0;
+	gamePausedTicks = 0;
 }
 
 void Timer::pause()
 {
-    //If the timer is running and isn't already paused
-    if( mStarted && !mPaused )
+    if( gameStarted && !gamePaused )
     {
-        //Pause the timer
-        mPaused = true;
-
-        //Calculate the paused ticks
-        mPausedTicks = SDL_GetTicks() - mStartTicks;
-		mStartTicks = 0;
+        gamePaused = true;
+        gamePausedTicks = SDL_GetTicks() - gameStartTicks;
+		gameStartTicks = 0;
     }
 }
 
 void Timer::unpause()
 {
-    //If the timer is running and paused
-    if( mStarted && mPaused )
+    if( gameStarted && gamePaused )
     {
-        //Unpause the timer
-        mPaused = false;
-
-        //Reset the starting ticks
-        mStartTicks = SDL_GetTicks() - mPausedTicks;
-
-        //Reset the paused ticks
-        mPausedTicks = 0;
+        gamePaused = false;
+        gameStartTicks = SDL_GetTicks() - gamePausedTicks;
+        gamePausedTicks = 0;
     }
 }
 
@@ -81,22 +64,17 @@ string formatTime(Uint32 mlseconds){
 
 string Timer::showCurrentTime()
 {
-	//The actual timer time
 	Uint32 time = 0;
 
-    //If the timer is running
-    if( mStarted )
+    if( gameStarted )
     {
-        //If the timer is paused
-        if( mPaused )
+        if( gamePaused )
         {
-            //Return the number of ticks when the timer was paused
-            time = mPausedTicks;
+            time = gamePausedTicks;
         }
         else
         {
-            //Return the current time minus the start time
-            time = SDL_GetTicks() - mStartTicks;
+            time = SDL_GetTicks() - gameStartTicks;
         }
     }
 
@@ -105,26 +83,10 @@ string Timer::showCurrentTime()
 
 bool Timer::isStarted()
 {
-	//Timer is running and paused or unpaused
-    return mStarted;
+	return gameStarted;
 }
 
 bool Timer::isPaused()
 {
-	//Timer is running and paused
-    return mPaused && mStarted;
-}
-
-string Timer::statusTimer(){
-    string status;
-    if(isStarted()){
-        if(isPaused()){
-            status = "Paused";
-        } else {
-            status = "Running";
-        }
-    } else {
-        status = "Stoped";
-    }
-    return status;
+	return gamePaused && gameStarted;
 }
