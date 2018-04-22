@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iomanip>
 #include "./player.hpp"
+#include "./common.hpp"
 
 using namespace std;
 
@@ -26,8 +27,9 @@ public:
     bool isLightCurrentPlayer();
 
     pair<Player, Player> controlTime(SDL_Event e, pair<Player, Player> players, 
-        SDL_Color textColor, Interface* interface);
-    
+        Interface* interface);
+    void drawRet(SDL_Renderer* gRenderer, string statusOfInformation);
+
 private:
     string informationGame;
     string statusGame;

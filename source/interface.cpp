@@ -5,7 +5,7 @@ using namespace std;
 Interface::Interface()
 {
     informationGame = "Chess Game";
-    statusGame = "Stoped";
+    statusGame = "../assets/imgs/play_white.png";
 	lightCurrentPlayer = true;
 }
 
@@ -40,8 +40,7 @@ string Interface::getInformation()
 }
 
 pair<Player, Player> Interface::controlTime(SDL_Event e, 
-    pair<Player, Player> players, SDL_Color textColor, Interface* interface){
-	string currentTime = "";
+    pair<Player, Player> players, Interface* interface){
 	string statusGameText = "";
 
 	if( e.key.keysym.sym == SDLK_s )
@@ -50,39 +49,32 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 		{
 			players.second.timer.stop();
 			players.first.timer.stop();
-			statusGameText = "stoped game";
+			statusGameText = "../assets/imgs/play_black.png";
 		}
 		else
 		{
 			players.first.timer.start();
 			players.second.timer.start();
 			players.second.timer.pause();
-			currentTime = "light";
-			statusGameText = "start game";
-			cout << currentTime << " " << players.first.timer.isPaused() << " " << players.second.timer.isPaused() << endl;
+	
+			statusGameText = "../assets/imgs/play_white.png";
 		}
-		currentTime = "";
 	}
-	//Pause/unpause
 	else if( e.key.keysym.sym == SDLK_p )
 	{
-		cout << currentTime << " " << players.first.timer.isPaused() << " " << players.second.timer.isPaused() << endl;
 		if( players.first.timer.isPaused() and players.second.timer.isPaused() )
 		{
-			if(interface->isLightCurrentPlayer()){
-				players.first.timer.unpause();
-			} else {
+			(interface->isLightCurrentPlayer()) ? players.first.timer.unpause():
 				players.second.timer.unpause();
-			}
-			statusGameText = "restart game";
+			
+			statusGameText = "../assets/imgs/pause.png";
 		}
 		else
 		{
 			players.first.timer.pause();
 			players.second.timer.pause();
-			statusGameText = "paused game";
+			statusGameText = "../assets/imgs/play_white.png";
 		}
-		currentTime = "";
 	}
 	else if( e.key.keysym.sym == SDLK_c )
 	{
@@ -92,7 +84,7 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 			players.second.timer.unpause();
 			players.first.timer.pause();
 			players.first.setFault();
-			
+
 			interface->setLightCurrentPlayer(false);
 		} else {
 			players.second.timer.pause();
@@ -101,18 +93,49 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 
 			interface->setLightCurrentPlayer(true);
 		}
-		statusGameText = "Time of ";
 
+		statusGameText = "../assets/imgs/pause.png";
 	}
 
-	if(players.first.lostGamePerFault())
-	{
-		statusGameText = "O primeiro perdeu";
-	} else if (players.second.lostGamePerFault())
-	{
-		statusGameText = "O segundo perdeu";
-	}
 	interface->setStatusGame(statusGameText);
 
 	return players;
+}
+
+
+void Interface::drawRet(SDL_Renderer* gRenderer, string statusOfInformation){
+	SDL_Rect blackRet = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2 };
+	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0x00 );		
+	SDL_RenderFillRect( gRenderer, &blackRet );
+	SDL_Rect whiteRet = { SCREEN_WIDTH / 500, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+	SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );		
+	SDL_RenderFillRect( gRenderer, &whiteRet );
+	
+	int color[4];
+
+	if(statusOfInformation == "analysing"){
+		color[3] = 0;
+		color[2] = 96;
+		color[1] = 255;
+		color[0] = 255;
+	} else if(statusOfInformation == "valid"){
+		color[3] = 13;
+		color[2] = 239;
+		color[1] = 66;
+		color[0] = 255;
+	} else if(statusOfInformation == "invalid"){
+		color[3] = 220;
+		color[2] = 61;
+		color[1] = 42;
+		color[0] = 255;
+	} else {
+		color[3] = 255;
+		color[2] = 255;
+		color[1] = 255;
+		color[0] = 255;
+	}
+	
+	SDL_Rect fillRect2 = { 1, SCREEN_HEIGHT / SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT/2};
+	SDL_SetRenderDrawColor( gRenderer, color[3], color[2], color[1], color[0] );		
+	SDL_RenderFillRect( gRenderer, &fillRect2 );
 }

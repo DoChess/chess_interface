@@ -23,12 +23,10 @@ string Player::getFaults()
 
 bool Player::lostGamePerFault()
 {
-    if(faults >= 0)
-    {
-        return false;
-    } 
-    else 
-    {
-        return true;
-    }
+    return (faults >= 0) ? false : true;
+}
+
+bool Player::lostGamePerTime()
+{
+    return (this->timer.showCurrentTime() != "00:00:00") ? false : true;
 }
