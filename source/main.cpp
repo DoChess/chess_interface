@@ -27,6 +27,8 @@ int main( int argc, char* args[] )
 			Interface interface;
 
 			pair<Player, Player> players (lightPlayer, darkPlayer);
+			string statusOfInformation = "valid";
+			string information = "CHESS D2 TO C3 MOVE";
 
 			while( !quit )
 			{
@@ -41,12 +43,13 @@ int main( int argc, char* args[] )
 						players = interface.controlTime(e, players, &interface);
 					} 
 				}
-				screen.renderTexts(players, &interface);
 				
-				SDL_SetRenderDrawColor( screen.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+				screen.updateElements( players, &interface );
 				SDL_RenderClear( screen.gRenderer );
-
-				screen.drawRet();
+				
+				interface.setInformation( information );
+				interface.drawRet( screen.gRenderer, statusOfInformation );
+				
 				screen.renderElements();
 
 				SDL_RenderPresent( screen.gRenderer );

@@ -37,8 +37,7 @@ public:
     bool loadMedias();
     void close();
 
-    void renderTexts(pair<Player, Player> players, Interface* interface);
-    void drawRet();
+    void updateElements(pair<Player, Player> players, Interface* interface);
     void renderElements();
 
 private:
