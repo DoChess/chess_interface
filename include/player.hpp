@@ -12,14 +12,16 @@
 class Player
 {
     public:
-				Player();
-				Timer timer;
-				std::string getFaults();
-				void setFault();
-				bool lostGamePerFault();
+		Player();
+		Timer timer;
+		std::string getFaults();
+		void setFault();
+
+		bool lostGamePerFault();
+		bool lostGamePerTime();
 
     private:
-				short int faults;
+		short int faults;
 };
 
 #endif

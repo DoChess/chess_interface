@@ -26,7 +26,7 @@ public:
     bool isLightCurrentPlayer();
 
     pair<Player, Player> controlTime(SDL_Event e, pair<Player, Player> players, 
-        SDL_Color textColor, Interface* interface);
+        Interface* interface);
     
 private:
     string informationGame;

@@ -14,8 +14,11 @@ SDL_Renderer* gRenderer = NULL;
 TTF_Font* gFont = NULL;
 TTF_Font* gFontTimer = NULL;
 
-SDL_Texture* loadTexture( std::string path );
 SDL_Texture* gTexture = NULL;
+
+//Scene sprites
+SDL_Rect gSpriteClips[ 4 ];
+LTexture gSpriteSheetTexture;
 
 //Scene textures
 LTexture playerTimeDarkTexture;
@@ -29,28 +32,42 @@ bool init();
 bool loadMedia();
 void close();
 
-void renderTexts(pair<Player, Player> players, Interface* interface ,SDL_Color textColor){
-	if( !playerTimeDarkTexture.loadFromRenderedText( players.first.timer.showCurrentTime(), textColor, gRenderer, gFontTimer ) )
+void drawRet(){
+	SDL_Rect fillRect = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2 };
+	SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0x00, 0x00 );		
+	SDL_RenderFillRect( gRenderer, &fillRect );
+
+	SDL_Rect fillRect2 = { 1, SCREEN_HEIGHT / SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT/2};
+	SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );		
+	SDL_RenderFillRect( gRenderer, &fillRect2 );
+}
+
+void renderTexts(pair<Player, Player> players, Interface* interface){
+	SDL_Color textColorBlack = { 0, 0, 0, 255 };
+	SDL_Color textColorWhite = { 255, 255, 255, 255 };
+	//SDL_Color textColorRed = { 255, 0, 0, 255 };
+	
+	if( !playerTimeLightTexture.loadFromRenderedText( players.first.timer.showCurrentTime(), textColorBlack, gRenderer, gFontTimer ) )
 	{
 		printf( "Unable to render time texture!\n" );
 	}
-	if( !playerTimeLightTexture.loadFromRenderedText( players.second.timer.showCurrentTime(), textColor, gRenderer, gFontTimer ) )
+	if( !playerTimeDarkTexture.loadFromRenderedText( players.second.timer.showCurrentTime(), textColorWhite, gRenderer, gFontTimer ) )
 	{
 		printf( "Unable to render time texture!\n" );
 	}
-	if( !playerFailuresDarkTexture.loadFromRenderedText( players.first.getFaults(), textColor, gRenderer, gFont ) )
+	if( !playerFailuresDarkTexture.loadFromRenderedText( players.first.getFaults(), textColorWhite, gRenderer, gFont ) )
 	{
 		printf( "Unable to render time texture!\n" );
 	}
-	if( !playerFailuresLightTexture.loadFromRenderedText( players.second.getFaults(), textColor, gRenderer, gFont ) )
+	if( !playerFailuresLightTexture.loadFromRenderedText( players.second.getFaults(), textColorBlack, gRenderer, gFont ) )
 	{
 		printf( "Unable to render time texture!\n" );
 	}
-	if( !gStatusGameTexture.loadFromRenderedText( interface->getStatusGame(), textColor, gRenderer, gFont ) )
+	if( !gStatusGameTexture.loadFromRenderedText( interface->getStatusGame(), textColorBlack, gRenderer, gFont ) )
 	{
 		printf( "Unable to render time texture!\n" );
 	}
-	if( !gInfoTexture.loadFromRenderedText( interface->getInformation(), textColor, gRenderer, gFont ) )
+	if( !gInfoTexture.loadFromRenderedText( interface->getInformation(), textColorBlack, gRenderer, gFont ) )
 	{
 		printf( "Unable to render time texture!\n" );
 	}
@@ -60,10 +77,17 @@ void renderElements(){
 	//Render textures
 	gInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 4), gRenderer );
 	gStatusGameTexture.render( (SCREEN_WIDTH - gStatusGameTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStatusGameTexture.getHeight()) / 2, gRenderer );
-	playerTimeDarkTexture.render( (SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 8 , (((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight()) / 4), gRenderer );
-	playerTimeLightTexture.render( ((SCREEN_WIDTH - playerTimeLightTexture.getWidth()) / 2) + ((SCREEN_WIDTH - playerTimeLightTexture.getWidth()) / 3) , (((SCREEN_HEIGHT - playerTimeLightTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeLightTexture.getHeight()) / 4), gRenderer );
-	playerFailuresDarkTexture.render( (SCREEN_WIDTH - playerFailuresDarkTexture.getWidth()) / 8 , SCREEN_HEIGHT - playerFailuresDarkTexture.getWidth(), gRenderer );
-	playerFailuresLightTexture.render( SCREEN_WIDTH - playerFailuresDarkTexture.getWidth(), SCREEN_HEIGHT - playerFailuresDarkTexture.getWidth(), gRenderer );
+	playerTimeLightTexture.render( (SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 8 , (((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight()) / 4), gRenderer );
+	playerTimeDarkTexture.render( ((SCREEN_WIDTH - playerTimeLightTexture.getWidth()) / 2) + ((SCREEN_WIDTH - playerTimeLightTexture.getWidth()) / 3) , (((SCREEN_HEIGHT - playerTimeLightTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeLightTexture.getHeight()) / 4), gRenderer );
+	playerFailuresLightTexture.render( (SCREEN_WIDTH - playerFailuresDarkTexture.getWidth()*4) / 8 , SCREEN_HEIGHT - playerFailuresDarkTexture.getHeight(), gRenderer );
+	playerFailuresDarkTexture.render( SCREEN_WIDTH - playerFailuresDarkTexture.getWidth()*4, SCREEN_HEIGHT - playerFailuresDarkTexture.getHeight(), gRenderer );
+
+	//Render top left sprite
+	gSpriteSheetTexture.render( 0, 0, gRenderer, &gSpriteClips[ 0 ] );
+
+	//Render top right sprite
+	gSpriteSheetTexture.render( SCREEN_WIDTH - gSpriteClips[ 1 ].w, 0, gRenderer, &gSpriteClips[ 1 ] );
+
 
 }
 
@@ -83,57 +107,41 @@ int main( int argc, char* args[] )
 		}
 		else
 		{
-			//Main loop flag
 			bool quit = false;
-
-			//Event handler
 			SDL_Event e;
-
-			//Set text color as black
-			SDL_Color textColor = { 0, 0, 0, 255 };
-
-			//The application timer
+		
 			Player lightPlayer, darkPlayer;
 			Interface interface;
 
-			//In memory text stream
-			string light, dark;
 			pair<Player, Player> players (lightPlayer, darkPlayer);
 
-
-			//While application is running
 			while( !quit )
 			{
 				//Handle events on queue
 				while( SDL_PollEvent( &e ) != 0 )
 				{
-					//User requests quit
 					if( e.type == SDL_QUIT )
 					{
 						quit = true;
 					}
-					//Reset start time on return keypress
 					else if( e.type == SDL_KEYDOWN )
 					{
-						players = interface.controlTime(e, players, textColor, &interface);
-						lightPlayer = players.first;
-						darkPlayer = players.second;
+						players = interface.controlTime(e, players, &interface);
 					} 
 				}
-				renderTexts(players, &interface, textColor);
+				renderTexts(players, &interface);
 				
-				//Clear screen
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( gRenderer );
 
+				drawRet();
 				renderElements();
-				//Update screen
+
 				SDL_RenderPresent( gRenderer );
 			}
 		}
 	}
 
-	//Free resources and close SDL
 	close();
 
 	return 0;
@@ -176,10 +184,8 @@ bool init()
 			}
 			else
 			{
-				//Initialize renderer color
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
-				//Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
 				if( !( IMG_Init( imgFlags ) & imgFlags ) )
 				{
@@ -187,7 +193,6 @@ bool init()
 					success = false;
 				}
 
-				//Initialize SDL_ttf
 				if( TTF_Init() == -1 )
 				{
 					printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
@@ -200,40 +205,14 @@ bool init()
 	return success;
 }
 
-SDL_Texture* loadTexture( std::string path )
-{
-    //The final texture
-    SDL_Texture* newTexture = NULL;
-
-    //Load image at specified path
-    SDL_Surface* loadedSurface = IMG_Load( path.c_str() );
-    if( loadedSurface == NULL )
-    {
-        printf( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
-    }
-    else
-    {
-        //Create texture from surface pixels
-        newTexture = SDL_CreateTextureFromSurface( gRenderer, loadedSurface );
-        if( newTexture == NULL )
-        {
-            printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
-        }
-        //Get rid of old loaded surface
-        SDL_FreeSurface( loadedSurface );
-    }
-
-    return newTexture;
-}
 
 bool loadMedia()
 {
-	//Loading success flag
 	bool success = true;
 
-	//Open the font
 	gFontTimer = TTF_OpenFont( "../assets/font/lazy.ttf", 70 );
 	gFont = TTF_OpenFont( "../assets/font/lemon.ttf", 30 );
+	
 	if( gFont == NULL )
 	{
 		printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
@@ -251,18 +230,32 @@ bool loadMedia()
 			success = false;
 		}
 
-		gTexture = loadTexture( "../assets/imgs/black_king.png" );
-		if( gTexture == NULL )
-		{
-			printf( "Failed to load texture image!\n" );
-			success = false;
-		}
-
 		//Load pause prompt texture
 		if( !gInfoTexture.loadFromRenderedText( "Chess Game", textColor, gRenderer, gFont ) )
 		{
 			printf( "Unable to render information texture!\n" );
 			success = false;
+		}
+
+			//Load sprite sheet texture
+		if( !gSpriteSheetTexture.loadFromFile( "../assets/imgs/kings.png", gRenderer ) )
+		{
+			printf( "Failed to load sprite sheet texture!\n" );
+			success = false;
+		}
+		else
+		{
+			//Set top left sprite
+			gSpriteClips[ 0 ].x =   0;
+			gSpriteClips[ 0 ].y =   0;
+			gSpriteClips[ 0 ].w = 10;
+			gSpriteClips[ 0 ].h = 10;
+
+			//Set top right sprite
+			gSpriteClips[ 1 ].x = 170;
+			gSpriteClips[ 1 ].y = 0;
+			gSpriteClips[ 1 ].w = 135;
+			gSpriteClips[ 1 ].h = 150;
 		}
 	}
 
@@ -275,6 +268,8 @@ void close()
 	playerTimeDarkTexture.free();
 	playerTimeLightTexture.free();
 	gStatusGameTexture.free();
+
+	gSpriteSheetTexture.free();
 
 	SDL_DestroyTexture( gTexture );
     gTexture = NULL;

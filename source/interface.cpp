@@ -40,8 +40,7 @@ string Interface::getInformation()
 }
 
 pair<Player, Player> Interface::controlTime(SDL_Event e, 
-    pair<Player, Player> players, SDL_Color textColor, Interface* interface){
-	string currentTime = "";
+    pair<Player, Player> players, Interface* interface){
 	string statusGameText = "";
 
 	if( e.key.keysym.sym == SDLK_s )
@@ -50,39 +49,32 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 		{
 			players.second.timer.stop();
 			players.first.timer.stop();
-			statusGameText = "stoped game";
+			statusGameText = "stoped";
 		}
 		else
 		{
 			players.first.timer.start();
 			players.second.timer.start();
 			players.second.timer.pause();
-			currentTime = "light";
-			statusGameText = "start game";
-			cout << currentTime << " " << players.first.timer.isPaused() << " " << players.second.timer.isPaused() << endl;
+	
+			statusGameText = "running";
 		}
-		currentTime = "";
 	}
-	//Pause/unpause
 	else if( e.key.keysym.sym == SDLK_p )
 	{
-		cout << currentTime << " " << players.first.timer.isPaused() << " " << players.second.timer.isPaused() << endl;
 		if( players.first.timer.isPaused() and players.second.timer.isPaused() )
 		{
-			if(interface->isLightCurrentPlayer()){
-				players.first.timer.unpause();
-			} else {
+			(interface->isLightCurrentPlayer()) ? players.first.timer.unpause():
 				players.second.timer.unpause();
-			}
-			statusGameText = "restart game";
+			
+			statusGameText = "running";
 		}
 		else
 		{
 			players.first.timer.pause();
 			players.second.timer.pause();
-			statusGameText = "paused game";
+			statusGameText = "paused";
 		}
-		currentTime = "";
 	}
 	else if( e.key.keysym.sym == SDLK_c )
 	{
@@ -92,7 +84,7 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 			players.second.timer.unpause();
 			players.first.timer.pause();
 			players.first.setFault();
-			
+
 			interface->setLightCurrentPlayer(false);
 		} else {
 			players.second.timer.pause();
@@ -101,17 +93,10 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 
 			interface->setLightCurrentPlayer(true);
 		}
-		statusGameText = "Time of ";
 
+		statusGameText = "running";
 	}
 
-	if(players.first.lostGamePerFault())
-	{
-		statusGameText = "O primeiro perdeu";
-	} else if (players.second.lostGamePerFault())
-	{
-		statusGameText = "O segundo perdeu";
-	}
 	interface->setStatusGame(statusGameText);
 
 	return players;
