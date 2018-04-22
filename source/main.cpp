@@ -17,7 +17,6 @@ TTF_Font* gFontTimer = NULL;
 SDL_Texture* gTexture = NULL;
 
 //Scene sprites
-SDL_Rect gSpriteClips[ 4 ];
 LTexture gSpriteSheetTexture;
 
 //Scene textures
@@ -63,9 +62,9 @@ void renderTexts(pair<Player, Player> players, Interface* interface){
 	{
 		printf( "Unable to render time texture!\n" );
 	}
-	if( !gStatusGameTexture.loadFromRenderedText( interface->getStatusGame(), textColorBlack, gRenderer, gFont ) )
+	if( !gStatusGameTexture.loadFromFile( interface->getStatusGame(), gRenderer) )
 	{
-		printf( "Unable to render time texture!\n" );
+		printf( "Unable to render start/stop prompt texture!\n" );
 	}
 	if( !gInfoTexture.loadFromRenderedText( interface->getInformation(), textColorBlack, gRenderer, gFont ) )
 	{
@@ -76,19 +75,12 @@ void renderTexts(pair<Player, Player> players, Interface* interface){
 void renderElements(){
 	//Render textures
 	gInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 4), gRenderer );
-	gStatusGameTexture.render( (SCREEN_WIDTH - gStatusGameTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStatusGameTexture.getHeight()) / 2, gRenderer );
 	playerTimeLightTexture.render( (SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 8 , (((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight()) / 4), gRenderer );
 	playerTimeDarkTexture.render( ((SCREEN_WIDTH - playerTimeLightTexture.getWidth()) / 2) + ((SCREEN_WIDTH - playerTimeLightTexture.getWidth()) / 3) , (((SCREEN_HEIGHT - playerTimeLightTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeLightTexture.getHeight()) / 4), gRenderer );
 	playerFailuresLightTexture.render( (SCREEN_WIDTH - playerFailuresDarkTexture.getWidth()*4) / 8 , SCREEN_HEIGHT - playerFailuresDarkTexture.getHeight(), gRenderer );
 	playerFailuresDarkTexture.render( SCREEN_WIDTH - playerFailuresDarkTexture.getWidth()*4, SCREEN_HEIGHT - playerFailuresDarkTexture.getHeight(), gRenderer );
 
-	//Render top left sprite
-	gSpriteSheetTexture.render( 0, 0, gRenderer, &gSpriteClips[ 0 ] );
-
-	//Render top right sprite
-	gSpriteSheetTexture.render( SCREEN_WIDTH - gSpriteClips[ 1 ].w, 0, gRenderer, &gSpriteClips[ 1 ] );
-
-
+	gStatusGameTexture.render( (SCREEN_WIDTH - gStatusGameTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStatusGameTexture.getHeight()) / 2, gRenderer );
 }
 
 int main( int argc, char* args[] )
@@ -223,39 +215,16 @@ bool loadMedia()
 		//Set text color as black
 		SDL_Color textColor = { 0, 0, 0, 255 };
 
-		//Load stop prompt texture
-		if( !gStatusGameTexture.loadFromRenderedText( "stop", textColor, gRenderer, gFont ) )
-		{
-			printf( "Unable to render start/stop prompt texture!\n" );
-			success = false;
-		}
-
 		//Load pause prompt texture
 		if( !gInfoTexture.loadFromRenderedText( "Chess Game", textColor, gRenderer, gFont ) )
 		{
 			printf( "Unable to render information texture!\n" );
 			success = false;
 		}
-
-			//Load sprite sheet texture
 		if( !gSpriteSheetTexture.loadFromFile( "../assets/imgs/kings.png", gRenderer ) )
 		{
 			printf( "Failed to load sprite sheet texture!\n" );
 			success = false;
-		}
-		else
-		{
-			//Set top left sprite
-			gSpriteClips[ 0 ].x =   0;
-			gSpriteClips[ 0 ].y =   0;
-			gSpriteClips[ 0 ].w = 10;
-			gSpriteClips[ 0 ].h = 10;
-
-			//Set top right sprite
-			gSpriteClips[ 1 ].x = 170;
-			gSpriteClips[ 1 ].y = 0;
-			gSpriteClips[ 1 ].w = 135;
-			gSpriteClips[ 1 ].h = 150;
 		}
 	}
 

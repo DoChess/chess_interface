@@ -5,7 +5,7 @@ using namespace std;
 Interface::Interface()
 {
     informationGame = "Chess Game";
-    statusGame = "Stoped";
+    statusGame = "../assets/imgs/play_white.png";
 	lightCurrentPlayer = true;
 }
 
@@ -49,7 +49,7 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 		{
 			players.second.timer.stop();
 			players.first.timer.stop();
-			statusGameText = "stoped";
+			statusGameText = "../assets/imgs/play_black.png";
 		}
 		else
 		{
@@ -57,7 +57,7 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 			players.second.timer.start();
 			players.second.timer.pause();
 	
-			statusGameText = "running";
+			statusGameText = "../assets/imgs/play_white.png";
 		}
 	}
 	else if( e.key.keysym.sym == SDLK_p )
@@ -67,13 +67,13 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 			(interface->isLightCurrentPlayer()) ? players.first.timer.unpause():
 				players.second.timer.unpause();
 			
-			statusGameText = "running";
+			statusGameText = "../assets/imgs/pause.png";
 		}
 		else
 		{
 			players.first.timer.pause();
 			players.second.timer.pause();
-			statusGameText = "paused";
+			statusGameText = "../assets/imgs/play_white.png";
 		}
 	}
 	else if( e.key.keysym.sym == SDLK_c )
@@ -94,7 +94,7 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 			interface->setLightCurrentPlayer(true);
 		}
 
-		statusGameText = "running";
+		statusGameText = "../assets/imgs/pause.png";
 	}
 
 	interface->setStatusGame(statusGameText);
