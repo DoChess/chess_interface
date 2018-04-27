@@ -1,63 +1,48 @@
 #include "../include/common.hpp"
 #include "../include/player.hpp"
 #include "../include/interface.hpp"
-#include "../include/screen.hpp"
 
 using namespace std;
 
 int main( int argc, char* args[] )
 {
-	Screen screen;
-	if( !screen.init() )
+	Interface interface;
+	if( interface.initInterface() )
 	{
-		printf( "Failed to initialize graphic interface!\n" );
-	}
-	else
-	{
-		if( !screen.loadMedias() )
-		{
-			printf( "Failed to load medias!\n" );
-		}
-		else
-		{
-			bool quit = false;
-			SDL_Event e;
-		
-			Player lightPlayer, darkPlayer;
-			Interface interface;
+		bool quit = false;
+		SDL_Event e;
+	
+		Player lightPlayer, darkPlayer;
 
-			pair<Player, Player> players (lightPlayer, darkPlayer);
-			string statusOfInformation = "valid";
-			string information = "CHESS D2 TO C3 MOVE";
+		pair<Player, Player> players (lightPlayer, darkPlayer);
+		string statusOfInformation = "valid";
+		string information = "CHESS D2 TO C3 MOVE";
 
-			while( !quit )
+		while( !quit )
+		{
+			while( SDL_PollEvent( &e ) != 0 )
 			{
-				while( SDL_PollEvent( &e ) != 0 )
+				if( e.type == SDL_QUIT )
 				{
-					if( e.type == SDL_QUIT )
-					{
-						quit = true;
-					}
-					else if( e.type == SDL_KEYDOWN )
-					{
-						players = interface.controlTime(e, players, &interface);
-					} 
+					quit = true;
 				}
-				
-				screen.updateElements( players, &interface );
-				SDL_RenderClear( screen.gRenderer );
-				
-				interface.setInformation( information );
-				interface.drawRet( screen.gRenderer, statusOfInformation );
-				
-				screen.renderElements();
-
-				SDL_RenderPresent( screen.gRenderer );
+				else if( e.type == SDL_KEYDOWN )
+				{
+					players = interface.controlTime(e, players, &interface);
+				} 
 			}
+			// Metodo de comando de voz
+			// 
+			interface.updateElements( players );
+			
+			interface.setInformation( information );
+			interface.drawBackgroundInterface( statusOfInformation );
+			
+			interface.renderElements();
+			SDL_RenderPresent( interface.gRenderer );
 		}
 	}
-
-	screen.close();
+	interface.close();
 
 	return 0;
 }
