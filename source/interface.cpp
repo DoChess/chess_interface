@@ -5,7 +5,7 @@ using namespace std;
 Interface::Interface()
 {
     informationGame = "Chess Game";
-    statusGame = "../assets/imgs/play_white.png";
+    statusGame = "../assets/imgs/play.png";
 	lightCurrentPlayer = true;
 	gWindow = NULL;
     gRenderer = NULL;
@@ -54,7 +54,7 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 		{
 			players.second.timer.stop();
 			players.first.timer.stop();
-			statusGameText = "../assets/imgs/play_black.png";
+			statusGameText = "../assets/imgs/play.png";
 		}
 		else
 		{
@@ -62,7 +62,7 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 			players.second.timer.start();
 			players.second.timer.pause();
 	
-			statusGameText = "../assets/imgs/play_white.png";
+			statusGameText = "../assets/imgs/play.png";
 		}
 	}
 	else if( e.key.keysym.sym == SDLK_p )
@@ -78,7 +78,7 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 		{
 			players.first.timer.pause();
 			players.second.timer.pause();
-			statusGameText = "../assets/imgs/play_white.png";
+			statusGameText = "../assets/imgs/play.png";
 		}
 	}
 	else if( e.key.keysym.sym == SDLK_c )
@@ -134,10 +134,10 @@ void Interface::drawBackgroundInterface(string statusOfInformation){
 		color[1] = 42;
 		color[0] = 255;
 	} else {
-		color[3] = 255;
-		color[2] = 255;
-		color[1] = 255;
-		color[0] = 255;
+		color[3] = 211;
+		color[2] = 211;
+		color[1] = 211;
+		color[0] = 211;
 	}
 	
 	SDL_Rect fillRect2 = { 1, SCREEN_HEIGHT / SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT/2};
@@ -203,8 +203,8 @@ bool Interface::loadMedias()
 {
 	bool success = true;
 
-	this->gFontTimer = TTF_OpenFont( "../assets/font/lazy.ttf", 70 );
-	this->gFont = TTF_OpenFont( "../assets/font/lemon.ttf", 30 );
+	this->gFontTimer = TTF_OpenFont( "../assets/font/lazy.ttf", 120 );
+	this->gFont = TTF_OpenFont( "../assets/font/lemon.ttf", 80 );
 	
 	if( this->gFont == NULL )
 	{
@@ -262,11 +262,11 @@ void Interface::updateElements(pair<Player, Player> players){
 	{
 		printf( "Unable to render time texture!\n" );
 	}
-	if( !playerFailuresDarkTexture.loadFromRenderedText( players.first.getFaults(), textColorWhite, this->gRenderer, this->gFont ) )
+	if( !playerFailuresDarkTexture.loadFromRenderedText( players.first.getFaults(), textColorWhite, this->gRenderer, this->gFontTimer ) )
 	{
 		printf( "Unable to render time texture!\n" );
 	}
-	if( !playerFailuresLightTexture.loadFromRenderedText( players.second.getFaults(), textColorBlack, this->gRenderer, this->gFont ) )
+	if( !playerFailuresLightTexture.loadFromRenderedText( players.second.getFaults(), textColorBlack, this->gRenderer, this->gFontTimer ) )
 	{
 		printf( "Unable to render time texture!\n" );
 	}
@@ -281,13 +281,23 @@ void Interface::updateElements(pair<Player, Player> players){
 }
 
 void Interface::renderElements(){
-	gInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 4), this->gRenderer );
-	playerTimeLightTexture.render( (SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 8 , (((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight()) / 4), this->gRenderer );
-	playerTimeDarkTexture.render( ((SCREEN_WIDTH - playerTimeLightTexture.getWidth()) / 2) + ((SCREEN_WIDTH - playerTimeLightTexture.getWidth()) / 3) , (((SCREEN_HEIGHT - playerTimeLightTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeLightTexture.getHeight()) / 4), this->gRenderer );
-	playerFailuresLightTexture.render( (SCREEN_WIDTH - playerFailuresDarkTexture.getWidth()*4) / 8 , SCREEN_HEIGHT - playerFailuresDarkTexture.getHeight(), this->gRenderer );
-	playerFailuresDarkTexture.render( SCREEN_WIDTH - playerFailuresDarkTexture.getWidth()*4, SCREEN_HEIGHT - playerFailuresDarkTexture.getHeight(), this->gRenderer );
+	short int timeHeight = (((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight()) / 2.5);
+	short int lightWidth = (SCREEN_WIDTH - playerTimeLightTexture.getWidth()) / 8;
+	short int darkWidth = ((SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 2) + ((SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 2.5);
 
-	gStatusGameTexture.render( (SCREEN_WIDTH - gStatusGameTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStatusGameTexture.getHeight()) / 2, this->gRenderer );
+	short int failureHeight = (((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight()) / 7.5);
+	short int lightFailureWidth = (SCREEN_WIDTH - playerFailuresDarkTexture.getWidth()*4) / 20;
+	short int darkFailureWidth = (SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) - ((SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 250);
+
+	gInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 4), this->gRenderer );
+	
+	playerTimeLightTexture.render( lightWidth , timeHeight, this->gRenderer );
+	playerTimeDarkTexture.render( darkWidth, timeHeight , this->gRenderer );
+	
+	playerFailuresLightTexture.render( lightFailureWidth, failureHeight, this->gRenderer );
+	playerFailuresDarkTexture.render( darkFailureWidth, failureHeight, this->gRenderer );
+
+	gStatusGameTexture.render( (SCREEN_WIDTH - gStatusGameTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStatusGameTexture.getHeight()) / 16, this->gRenderer );
 }
 bool Interface::initInterface(){
 	bool sucess = true;
