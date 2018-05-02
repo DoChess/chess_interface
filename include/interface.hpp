@@ -48,7 +48,7 @@ public:
     void setLightCurrentPlayer(bool currentPlayer);
     bool isLightCurrentPlayer();
 
-    pair<Player, Player> controlTime(SDL_Event e, pair<Player, Player> players, 
+    pair<Player, Player> controlTime(SDL_Event e, string message, pair<Player, Player> players, 
         Interface* interface);
         
     void drawBackgroundInterface(string statusOfInformation);

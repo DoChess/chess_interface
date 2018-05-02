@@ -44,13 +44,13 @@ string Interface::getInformation()
     return informationGame;
 }
 
-pair<Player, Player> Interface::controlTime(SDL_Event e, 
+pair<Player, Player> Interface::controlTime(SDL_Event e, string statusOfInformation, 
     pair<Player, Player> players, Interface* interface){
-	string statusGameText = "";
+	string statusGameText = "../assets/imgs/play.png";
 
-	if( e.key.keysym.sym == SDLK_s )
+	if( e.key.keysym.sym == SDLK_s or statusOfInformation == "15" or statusOfInformation == "11" )
 	{
-		if( players.second.timer.isStarted() and players.first.timer.isStarted())
+		if( players.second.timer.isStarted() and players.first.timer.isStarted() and statusOfInformation == "15")
 		{
 			players.second.timer.stop();
 			players.first.timer.stop();
@@ -65,9 +65,9 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 			statusGameText = "../assets/imgs/play.png";
 		}
 	}
-	else if( e.key.keysym.sym == SDLK_p )
+	else if( e.key.keysym.sym == SDLK_p or statusOfInformation == "12" or statusOfInformation == "13" )
 	{
-		if( players.first.timer.isPaused() and players.second.timer.isPaused() )
+		if( players.first.timer.isPaused() and players.second.timer.isPaused() and statusOfInformation == "13" )
 		{
 			(interface->isLightCurrentPlayer()) ? players.first.timer.unpause():
 				players.second.timer.unpause();
@@ -81,27 +81,24 @@ pair<Player, Player> Interface::controlTime(SDL_Event e,
 			statusGameText = "../assets/imgs/play.png";
 		}
 	}
-	else if( e.key.keysym.sym == SDLK_c )
+	else if( e.key.keysym.sym == SDLK_c or statusOfInformation == "14" )
 	{
 
 		if (players.second.timer.isPaused())
 		{
 			players.second.timer.unpause();
 			players.first.timer.pause();
-			players.first.setFault();
 
 			interface->setLightCurrentPlayer(false);
 		} else {
 			players.second.timer.pause();
 			players.first.timer.unpause();
-			players.second.setFault();
 
 			interface->setLightCurrentPlayer(true);
 		}
 
 		statusGameText = "../assets/imgs/pause.png";
 	}
-
 	interface->setStatusGame(statusGameText);
 
 	return players;
@@ -118,17 +115,22 @@ void Interface::drawBackgroundInterface(string statusOfInformation){
 	
 	int color[4];
 
-	if(statusOfInformation == "analysing"){
+	if(statusOfInformation == "33"){
+		color[3] = 255;
+		color[2] = 255;
+		color[1] = 0;
+		color[0] = 255;
+	} if(statusOfInformation == "32"){
 		color[3] = 0;
 		color[2] = 96;
 		color[1] = 255;
 		color[0] = 255;
-	} else if(statusOfInformation == "valid"){
+	} else if(statusOfInformation == "31"){
 		color[3] = 13;
 		color[2] = 239;
 		color[1] = 66;
 		color[0] = 255;
-	} else if(statusOfInformation == "invalid"){
+	} else if(statusOfInformation == "30"){
 		color[3] = 220;
 		color[2] = 61;
 		color[1] = 42;
