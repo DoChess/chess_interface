@@ -54,6 +54,7 @@ public:
         Interface* interface);
         
     void drawBackgroundInterface(string statusOfInformation);
+    pair<bool, string> isGameOver(pair<Player, Player> players);
 
 private:
     string informationGame;

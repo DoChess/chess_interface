@@ -18,6 +18,24 @@ string get_status_of_information(SDL_Event e, string status_of_information){
     {
        status_of_information = "14";
     }
+	
+	if( e.key.keysym.sym == SDLK_f )
+	{
+		status_of_information = "32";
+	}
+	else if( e.key.keysym.sym == SDLK_q )
+	{
+		status_of_information = "33";
+	}
+	else if( e.key.keysym.sym == SDLK_w )
+	{
+		status_of_information = "31";
+	}
+	else if( e.key.keysym.sym == SDLK_e )
+	{
+		status_of_information = "30";
+	}
+
     return status_of_information;
 }
 
@@ -33,6 +51,8 @@ int main( int argc, char* args[] )
 		Player lightPlayer, darkPlayer;
 
 		pair<Player, Player> players (lightPlayer, darkPlayer);
+		pair<bool, string> endGame (false, "");
+
         string information = "";
 		string status_of_information = "2Welcome to chess";
         string status_of_information_color_background = "";
@@ -64,18 +84,19 @@ int main( int argc, char* args[] )
 					}
 					else if (status_of_information[0]=='1')
 					{
-						players = interface.controlTime(status_of_information, players, &interface);	
+						players = interface.controlTime(status_of_information, players, &interface);
 					}
 				}
 			} 
 				
 			interface.updateElements( players );
 			
-			if(players.first.lostGamePerFault() or players.second.lostGamePerFault()){
-				information = "Player lost per fault";
-			} else if (players.first.lostGamePerTime() or players.second.lostGamePerTime()){
-				information = "Player lost per time";
-			}
+			endGame = interface.isGameOver(players);
+            if(endGame.second != "")
+            {
+                information = endGame.second;
+				players = interface.controlTime("15", players, &interface);
+            }
 
 			interface.setInformation( information );
 			interface.drawBackgroundInterface( status_of_information );

@@ -50,25 +50,25 @@ pair<Player, Player> Interface::controlTime(string statusOfInformation,
 	
 	string statusGameText = "../assets/imgs/play.png";
 
-	if((statusOfInformation == "15" or statusOfInformation == "11") and !this->gameHasStarted )
+	if(statusOfInformation == "15" or statusOfInformation == "11")
 	{
-		/*
 		if( players.second.timer.isStarted() and players.first.timer.isStarted() and statusOfInformation == "15")
 		{
 			players.second.timer.stop();
 			players.first.timer.stop();
 			statusGameText = "../assets/imgs/play.png";
+			this->gameHasStarted = false;
 		}
-		else
+		else if( !this->gameHasStarted )
 		{
-		*/
+		
 			players.first.timer.start();
 			players.second.timer.start();
 			players.second.timer.pause();
 			this->gameHasStarted = true;
 	
 			statusGameText = "../assets/imgs/play.png";
-		//}
+		}
 	}
 	else if( statusOfInformation == "12" or statusOfInformation == "13" )
 	{
@@ -211,7 +211,7 @@ bool Interface::loadMedias()
 	bool success = true;
 
 	this->gFontTimer = TTF_OpenFont( "../assets/font/lazy.ttf", 120 );
-	this->gFont = TTF_OpenFont( "../assets/font/lemon.ttf", 80 );
+	this->gFont = TTF_OpenFont( "../assets/font/lemon.ttf", 60 );
 	
 	if( this->gFont == NULL )
 	{
@@ -322,4 +322,24 @@ bool Interface::initInterface(){
 		}
 	}
 	return sucess;
+}
+
+pair<bool, string> Interface::isGameOver(pair<Player, Player> players){
+    pair<bool, string> gameOver (false, "");
+    if(players.first.lostGamePerFault()){
+        gameOver.first = true;
+        gameOver.second = "White player has lost per fault";
+    } else if(players.second.lostGamePerFault()){
+        gameOver.first = true;
+        gameOver.second = "Dark player has lost per fault";
+    }
+    if (players.second.lostGamePerTime()){
+        gameOver.first = true;
+        gameOver.second = "Dark player has lost per time";
+    } else if (players.first.lostGamePerTime())
+    {
+        gameOver.first = true;  
+        gameOver.second = "White player has lost per time";
+    }
+    return gameOver;
 }
