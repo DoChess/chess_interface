@@ -12,6 +12,7 @@ Interface::Interface()
     gFont = NULL;
     gFontTimer = NULL;
     gTexture = NULL;
+	gameHasStarted = false;
 }
 
 void Interface::setStatusGame(string status)
@@ -44,12 +45,14 @@ string Interface::getInformation()
     return informationGame;
 }
 
-pair<Player, Player> Interface::controlTime(SDL_Event e, string statusOfInformation, 
+pair<Player, Player> Interface::controlTime(string statusOfInformation,
     pair<Player, Player> players, Interface* interface){
+	
 	string statusGameText = "../assets/imgs/play.png";
 
-	if( e.key.keysym.sym == SDLK_s or statusOfInformation == "15" or statusOfInformation == "11" )
+	if((statusOfInformation == "15" or statusOfInformation == "11") and !this->gameHasStarted )
 	{
+		/*
 		if( players.second.timer.isStarted() and players.first.timer.isStarted() and statusOfInformation == "15")
 		{
 			players.second.timer.stop();
@@ -58,14 +61,16 @@ pair<Player, Player> Interface::controlTime(SDL_Event e, string statusOfInformat
 		}
 		else
 		{
+		*/
 			players.first.timer.start();
 			players.second.timer.start();
 			players.second.timer.pause();
+			this->gameHasStarted = true;
 	
 			statusGameText = "../assets/imgs/play.png";
-		}
+		//}
 	}
-	else if( e.key.keysym.sym == SDLK_p or statusOfInformation == "12" or statusOfInformation == "13" )
+	else if( statusOfInformation == "12" or statusOfInformation == "13" )
 	{
 		if( players.first.timer.isPaused() and players.second.timer.isPaused() and statusOfInformation == "13" )
 		{
@@ -81,9 +86,8 @@ pair<Player, Player> Interface::controlTime(SDL_Event e, string statusOfInformat
 			statusGameText = "../assets/imgs/play.png";
 		}
 	}
-	else if( e.key.keysym.sym == SDLK_c or statusOfInformation == "14" )
+	else if( statusOfInformation == "14" )
 	{
-
 		if (players.second.timer.isPaused())
 		{
 			players.second.timer.unpause();
@@ -99,6 +103,7 @@ pair<Player, Player> Interface::controlTime(SDL_Event e, string statusOfInformat
 
 		statusGameText = "../assets/imgs/pause.png";
 	}
+	
 	interface->setStatusGame(statusGameText);
 
 	return players;

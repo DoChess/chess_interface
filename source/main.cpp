@@ -5,6 +5,22 @@
 
 using namespace std;
 
+string get_status_of_information(SDL_Event e, string status_of_information){
+    if( e.key.keysym.sym == SDLK_s )
+    {
+       status_of_information = "11";
+    }
+    else if( e.key.keysym.sym == SDLK_p )
+    {
+       status_of_information =  status_of_information == "12" ? "12" : "13";
+    }
+    else if( e.key.keysym.sym == SDLK_c )
+    {
+       status_of_information = "14";
+    }
+    return status_of_information;
+}
+
 int main( int argc, char* args[] )
 {
 	Interface interface;
@@ -17,48 +33,40 @@ int main( int argc, char* args[] )
 		Player lightPlayer, darkPlayer;
 
 		pair<Player, Player> players (lightPlayer, darkPlayer);
-		string statusOfInformation = "";
-		string information = "Welcome to chess";
+        string information = "";
+		string status_of_information = "2Welcome to chess";
+        string status_of_information_color_background = "";
 		
-		init_server();
+		//init_server();
 		while( !quit )
 		{			
-			if( SDL_PollEvent( &e )!=0, e.type == SDL_QUIT )
+			if( e.type == SDL_QUIT )
 			{
 				quit = true;
 			}
 			else
 			{
+				/*
 				if(read(SD,rec_buff,300)!=0){
 					string a(rec_buff);
-					statusOfInformation = a;
-					cout << statusOfInformation << " - " << endl;
+					status_of_information = a;
+					cout << status_of_information << " - " << endl;
+				}*/
+				while( SDL_PollEvent( &e ) != 0 ){
+					status_of_information = get_status_of_information(e, status_of_information);
+					if (status_of_information[0] == '3')
+					{
+						status_of_information_color_background = status_of_information;
+					}
+					else if (status_of_information[0] == '2')
+					{
+						information = status_of_information.erase(0,1);
+					}
+					else if (status_of_information[0]=='1')
+					{
+						players = interface.controlTime(status_of_information, players, &interface);	
+					}
 				}
-				
-				// if( e.key.keysym.sym == SDLK_f )
-				// {
-				// 	information = "Movimento irreconhecivel";
-				// 	statusOfInformation = "32";
-				// }
-				// else if( e.key.keysym.sym == SDLK_q )
-				// {
-				// 	information = "CHESS D2 TO C3 MOVE";
-				// 	statusOfInformation = "33";
-				// }
-				// else if( e.key.keysym.sym == SDLK_w )
-				// {
-				// 	information = "MOVING D2 TO C3";
-				// 	statusOfInformation = "31";
-				// }
-				// else if( e.key.keysym.sym == SDLK_e )
-				// {
-				// 	information = "INVALID MOVE";
-				// 	statusOfInformation = "30";
-				// } else {
-				// 	statusOfInformation = "14";
-				// }
-				cout << statusOfInformation << " - ";
-				players = interface.controlTime(e, statusOfInformation, players, &interface);
 			} 
 				
 			interface.updateElements( players );
@@ -70,7 +78,7 @@ int main( int argc, char* args[] )
 			}
 
 			interface.setInformation( information );
-			interface.drawBackgroundInterface( statusOfInformation );
+			interface.drawBackgroundInterface( status_of_information );
 			
 			interface.renderElements();
 			SDL_RenderPresent( interface.gRenderer );

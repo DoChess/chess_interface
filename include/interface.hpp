@@ -32,6 +32,8 @@ public:
     LTexture gInfoTexture;
     LTexture gSpriteSheetTexture;
     
+    bool gameHasStarted;
+
     bool initLibsSDL();
     bool initInterface();
     bool loadMedias();
@@ -48,7 +50,7 @@ public:
     void setLightCurrentPlayer(bool currentPlayer);
     bool isLightCurrentPlayer();
 
-    pair<Player, Player> controlTime(SDL_Event e, string message, pair<Player, Player> players, 
+    pair<Player, Player> controlTime(string statusOfInformation, pair<Player, Player> players,
         Interface* interface);
         
     void drawBackgroundInterface(string statusOfInformation);

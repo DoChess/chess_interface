@@ -34,7 +34,7 @@ void init_server()
 
   ////////////
   struct hostent *hPtr;
-  char *remoteHost="192.168.10.72";//Get IP address of the server from the command line arguments …
+  char *remoteHost = (char*) "192.168.10.72";//Get IP address of the server from the command line arguments …
   if((hPtr = gethostbyname(remoteHost)) == NULL)
   {
     printf("ERROR:gethostbyname\n");
