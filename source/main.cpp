@@ -57,28 +57,29 @@ int main( int argc, char* args[] )
 		string status_of_information = "2Welcome to chess";
         string status_of_information_color_background = "";
 		
-		//init_server();
+		init_server();
 		while( !quit )
 		{			
-			if( e.type == SDL_QUIT )
-			{
-				quit = true;
-			}
-			else
-			{
-				/*
+			bool el = SDL_PollEvent( &e )!=0;
+			if( el, e.type == SDL_QUIT )
+            {
+                std::cout << "\nSaiu no quit" << '\n';
+                quit = true;
+            }
+            else
+            {	
 				if(read(SD,rec_buff,300)!=0){
 					string a(rec_buff);
 					status_of_information = a;
 					cout << status_of_information << " - " << endl;
-				}*/
-				while( SDL_PollEvent( &e ) != 0 ){
+				}
+				//while( SDL_PollEvent( &e ) != 0){
 					status_of_information = get_status_of_information(e, status_of_information);
 					if (status_of_information[0] == '3')
 					{
 						status_of_information_color_background = status_of_information;
 					}
-					else if (status_of_information[0] == '2')
+					else if (status_of_information[3] == '2')
 					{
 						information = status_of_information.erase(0,1);
 					}
@@ -86,7 +87,7 @@ int main( int argc, char* args[] )
 					{
 						players = interface.controlTime(status_of_information, players, &interface);
 					}
-				}
+				//}
 			} 
 				
 			interface.updateElements( players );
