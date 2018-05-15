@@ -53,8 +53,8 @@ int main( int argc, char* args[] )
     pair<Player, Player> players (lightPlayer, darkPlayer);
     pair<bool, string> endGame (false, "");
 
-    string information = "";
-    string status_of_information = "2Welcome to chess";
+    string information = "Welcome to chess";
+    string status_of_information = "";
     string status_of_information_color_background = "";
 
     attach_memory();
@@ -75,18 +75,16 @@ int main( int argc, char* args[] )
         }
 
         //while( SDL_PollEvent( &e ) != 0){
-        status_of_information = get_status_of_information(e, status_of_information);
-        if (status_of_information[0] == '3')
-        {
-          status_of_information_color_background = status_of_information;
-        }
-        else if (status_of_information[3] == '2')
-        {
-          information = status_of_information.erase(0,1);
-        }
-        else if (status_of_information[0]=='1')
+        //status_of_information = get_status_of_information(e, status_of_information);
+        if (status_of_information[0]=='1')
         {
           players = interface.controlTime(status_of_information, players, &interface);
+        }
+        else if (status_of_information[0] == '3')
+        {
+          status_of_information_color_background = status_of_information.substr(0, 2);
+          cout << status_of_information_color_background << endl;
+          information = status_of_information.erase(0,3);
         }
         //}
       } 
@@ -101,7 +99,7 @@ int main( int argc, char* args[] )
       }
 
       interface.setInformation( information );
-      interface.drawBackgroundInterface( status_of_information );
+      interface.drawBackgroundInterface( status_of_information_color_background );
 
       interface.renderElements();
       SDL_RenderPresent( interface.gRenderer );
