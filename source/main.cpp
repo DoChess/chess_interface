@@ -18,8 +18,7 @@ string get_status_of_information(SDL_Event e, string status_of_information){
   {
     status_of_information = "14";
   }
-
-  if( e.key.keysym.sym == SDLK_f )
+  else if( e.key.keysym.sym == SDLK_f )
   {
     status_of_information = "32";
   }
@@ -54,8 +53,8 @@ int main( int argc, char* args[] )
     pair<bool, string> endGame (false, "");
 
     string information = "Welcome to chess";
-    string status_of_information = "";
-    string status_of_information_color_background = "";
+    string status_of_information = "None";
+    string status_of_information_color_background = "None";
 
     attach_memory();
     while( !quit )
@@ -79,6 +78,7 @@ int main( int argc, char* args[] )
         if (status_of_information[0]=='1')
         {
           players = interface.controlTime(status_of_information, players, &interface);
+          status_of_information = "None";
         }
         else if (status_of_information[0] == '3')
         {
@@ -96,6 +96,7 @@ int main( int argc, char* args[] )
       {
         information = endGame.second;
         players = interface.controlTime("15", players, &interface);
+        strncpy(data, "15", SHM_SIZE);
       }
 
       interface.setInformation( information );
