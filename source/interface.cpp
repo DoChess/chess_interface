@@ -120,27 +120,27 @@ void Interface::drawBackgroundInterface(string statusOfInformation){
 	
 	int color[4];
 
-	if(statusOfInformation == "33"){
+	if(statusOfInformation == "33"){ // Yellow
 		color[3] = 255;
 		color[2] = 255;
 		color[1] = 0;
 		color[0] = 255;
-	} if(statusOfInformation == "32"){
+	} if(statusOfInformation == "32"){ // Blue
 		color[3] = 0;
 		color[2] = 96;
 		color[1] = 255;
 		color[0] = 255;
-	} else if(statusOfInformation == "31"){
+	} else if(statusOfInformation == "31"){ // Green
 		color[3] = 13;
 		color[2] = 239;
 		color[1] = 66;
 		color[0] = 255;
-	} else if(statusOfInformation == "30"){
+	} else if(statusOfInformation == "30"){ // Red
 		color[3] = 220;
 		color[2] = 61;
 		color[1] = 42;
 		color[0] = 255;
-	} else {
+	} else { // Gray
 		color[3] = 211;
 		color[2] = 211;
 		color[1] = 211;
