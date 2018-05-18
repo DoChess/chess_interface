@@ -1,6 +1,7 @@
 #include "../include/common.hpp"
 #include "../include/player.hpp"
 #include "../include/interface.hpp"
+#include <cwchar>
 #include "../shared_memory.cpp"
 
 using namespace std;
@@ -69,8 +70,9 @@ int main( int argc, char* args[] )
       {	
         string a(data);        
         if(a != "None"){
+          char teste[5] = "None";
           status_of_information = a;
-          strncpy(data, "None", SHM_SIZE);
+          strncpy(data, teste, SHM_SIZE);
         }
 
         //while( SDL_PollEvent( &e ) != 0){
