@@ -10,30 +10,30 @@
 
 class Timer
 {
-    public:
-		Timer();
+  public:
+    Timer();
 
-		void start();
-		void stop();
-		void pause();
-		void unpause();
+    void start();
+    void stop();
+    void pause();
+    void unpause();
 
-		bool isStarted();
-		bool isPaused();
-		
-        std::string showCurrentTime();
-		std::string formatTime(Uint32 mlseconds);
+    bool isStarted();
+    bool isPaused();
 
-		int seconds;
-		int minutes;
-		int hours;
+    std::string showCurrentTime();
+    std::string formatTime(Uint32 mlseconds);
 
-    private:
-		Uint32 gameStartTicks;
-		Uint32 gamePausedTicks;
+    Uint32 seconds;
+    Uint32 minutes;
+    Uint32 hours;
 
-		bool gamePaused;
-		bool gameStarted;
+  private:
+    Uint32 gameStartTicks;
+    Uint32 gamePausedTicks;
+
+    bool gamePaused;
+    bool gameStarted;
 
 };
 

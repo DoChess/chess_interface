@@ -6,6 +6,7 @@ using namespace std;
 Player::Player()
 {
     faults = NUMBER_OF_FAULTS;
+    cout << "Player created successfuly" << endl;
 }
 
 void Player::setFault()
@@ -13,7 +14,6 @@ void Player::setFault()
     faults -= 1;
 }
 
-// TO DO - Improve name of faults_format
 string Player::getFaults()
 {
     stringstream faults_format;

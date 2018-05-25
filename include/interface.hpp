@@ -16,6 +16,7 @@ class Interface
 {
 public:
     Interface();
+    ~Interface();
 
     SDL_Window* gWindow;
     SDL_Renderer* gRenderer;
@@ -37,7 +38,6 @@ public:
     bool initLibsSDL();
     bool initInterface();
     bool loadMedias();
-    void close();
     void renderElements();
     void updateElements(pair<Player, Player> players);
     

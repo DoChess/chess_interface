@@ -6,13 +6,47 @@ Interface::Interface()
 {
     informationGame = "Chess Game";
     statusGame = "../assets/imgs/play.png";
-	lightCurrentPlayer = true;
-	gWindow = NULL;
+  	lightCurrentPlayer = true;
+	  gWindow = NULL;
     gRenderer = NULL;
     gFont = NULL;
     gFontTimer = NULL;
     gTexture = NULL;
-	gameHasStarted = false;
+  	gameHasStarted = false;
+    cout << "Interface created successfully" << endl; 
+}
+
+Interface::~Interface()
+{
+  playerTimeDarkTexture.free();
+	playerFailuresDarkTexture.free();
+
+	playerTimeLightTexture.free();
+	playerFailuresLightTexture.free();
+
+	gStatusGameTexture.free();
+	gSpriteSheetTexture.free();
+	gInfoTexture.free();
+
+	SDL_DestroyTexture( this->gTexture );
+  this->gTexture = NULL;
+
+	TTF_CloseFont( this->gFont );
+	this->gFont = NULL;
+
+	TTF_CloseFont( this->gFontTimer );
+	this->gFontTimer = NULL;
+
+	SDL_DestroyRenderer( this->gRenderer );
+	this->gRenderer = NULL;
+
+	SDL_DestroyWindow( this->gWindow );
+	this->gWindow = NULL;
+
+	TTF_Quit();
+	IMG_Quit();
+	SDL_Quit();
+  cout << "Interface deleted successfully" << endl; 
 }
 
 void Interface::setStatusGame(string status)
@@ -56,7 +90,6 @@ pair<Player, Player> Interface::controlTime(string statusOfInformation,
 		{
 			players.second.timer.stop();
 			players.first.timer.stop();
-			statusGameText = "../assets/imgs/play.png";
 			this->gameHasStarted = false;
 		}
 		else if( !this->gameHasStarted )
@@ -66,8 +99,6 @@ pair<Player, Player> Interface::controlTime(string statusOfInformation,
 			players.second.timer.start();
 			players.second.timer.pause();
 			this->gameHasStarted = true;
-	
-			statusGameText = "../assets/imgs/play.png";
 		}
 	}
 	else if( statusOfInformation == "12" or statusOfInformation == "13" )
@@ -83,7 +114,6 @@ pair<Player, Player> Interface::controlTime(string statusOfInformation,
 		{
 			players.first.timer.pause();
 			players.second.timer.pause();
-			statusGameText = "../assets/imgs/play.png";
 		}
 	}
 	else if( statusOfInformation == "14" )
@@ -118,7 +148,7 @@ void Interface::drawBackgroundInterface(string statusOfInformation){
 	SDL_SetRenderDrawColor( this->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );		
 	SDL_RenderFillRect( this->gRenderer, &whiteRet );
 	
-	int color[4];
+	int* color = new int [4];
 
 	if(statusOfInformation == "32"){ // Yellow
 		color[3] = 255;
@@ -150,6 +180,8 @@ void Interface::drawBackgroundInterface(string statusOfInformation){
 	SDL_Rect fillRect2 = { 1, SCREEN_HEIGHT / SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT/2};
 	SDL_SetRenderDrawColor( gRenderer, color[3], color[2], color[1], color[0] );		
 	SDL_RenderFillRect( gRenderer, &fillRect2 );
+
+  delete color;
 }
 
 
@@ -215,12 +247,12 @@ bool Interface::loadMedias()
 	
 	if( this->gFont == NULL )
 	{
-		printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
+		printf( "Failed to load information font! SDL_ttf Error: %s\n", TTF_GetError() );
 		success = false;
 	}
 	if( this->gFontTimer == NULL )
 	{
-		printf( "Failed to load lazy font Timer! SDL_ttf Error: %s\n", TTF_GetError() );
+		printf( "Failed to load timer font! SDL_ttf Error: %s\n", TTF_GetError() );
 		success = false;
 	}
 
@@ -228,38 +260,11 @@ bool Interface::loadMedias()
 	return success;
 }
 
-void Interface::close()
-{
-    playerTimeDarkTexture.free();
-	playerTimeLightTexture.free();
-	gStatusGameTexture.free();
-	gSpriteSheetTexture.free();
-
-	SDL_DestroyTexture( this->gTexture );
-    this->gTexture = NULL;
-
-	TTF_CloseFont( this->gFont );
-	this->gFont = NULL;
-
-	TTF_CloseFont( this->gFontTimer );
-	this->gFontTimer = NULL;
-
-	SDL_DestroyRenderer( this->gRenderer );
-	this->gRenderer = NULL;
-
-	SDL_DestroyWindow( this->gWindow );
-	this->gWindow = NULL;
-
-	TTF_Quit();
-	IMG_Quit();
-	SDL_Quit();
-}
 
 
 void Interface::updateElements(pair<Player, Player> players){
 	SDL_Color textColorBlack = { 0, 0, 0, 255 };
 	SDL_Color textColorWhite = { 255, 255, 255, 255 };
-	//SDL_Color textColorRed = { 255, 0, 0, 255 };
 	
 	if( !playerTimeLightTexture.loadFromRenderedText( players.first.timer.showCurrentTime(), textColorBlack, this->gRenderer, this->gFontTimer ) )
 	{
@@ -288,24 +293,25 @@ void Interface::updateElements(pair<Player, Player> players){
 }
 
 void Interface::renderElements(){
-	short int timeHeight = (((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight()) / 2.5);
-	short int lightWidth = (SCREEN_WIDTH - playerTimeLightTexture.getWidth()) / 8;
-	short int darkWidth = ((SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 2) + ((SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 2.5);
+	short timeHeight = (((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight()) / 2.5);
+	short lightWidth = (SCREEN_WIDTH - playerTimeLightTexture.getWidth()) / 8;
+	short darkWidth = ((SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 2) + ((SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 2.5);
 
-	short int failureHeight = (((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight()) / 7.5);
-	short int lightFailureWidth = (SCREEN_WIDTH - playerFailuresDarkTexture.getWidth()*4) / 20;
-	short int darkFailureWidth = (SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) - ((SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 250);
+	short failureHeight = (((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight()) / 7.5);
+	short lightFailureWidth = (SCREEN_WIDTH - playerFailuresDarkTexture.getWidth()*4) / 20;
+	short darkFailureWidth = (SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) - ((SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 250);
 
 	gInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 4), this->gRenderer );
 	
-	playerTimeLightTexture.render( lightWidth , timeHeight, this->gRenderer );
 	playerTimeDarkTexture.render( darkWidth, timeHeight , this->gRenderer );
+	playerFailuresDarkTexture.render( darkFailureWidth, failureHeight, this->gRenderer );
 	
 	playerFailuresLightTexture.render( lightFailureWidth, failureHeight, this->gRenderer );
-	playerFailuresDarkTexture.render( darkFailureWidth, failureHeight, this->gRenderer );
+	playerTimeLightTexture.render( lightWidth , timeHeight, this->gRenderer );
 
 	gStatusGameTexture.render( (SCREEN_WIDTH - gStatusGameTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStatusGameTexture.getHeight()) / 16, this->gRenderer );
 }
+
 bool Interface::initInterface(){
 	bool sucess = true;
 	if( !this->initLibsSDL() )
