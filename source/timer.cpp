@@ -10,6 +10,10 @@ Timer::Timer()
 
     gamePaused = false;
     gameStarted = false;
+
+	seconds = 0;
+	minutes = 0;
+	hours   = 0;
 }
 
 void Timer::start()
@@ -52,13 +56,15 @@ void Timer::unpause()
     }
 }
 
-string formatTime(Uint32 mlseconds){
+string Timer::formatTime(Uint32 mlseconds){
 	stringstream time;
 	int miliseconds = (int) (mlseconds);
-	int seconds = (int) (miliseconds / 1000) % 60;
-	int minutes = (int) ((miliseconds / (1000*60)) % 60);
-	int hours   = (int) ((miliseconds / (1000*60*60)) % 24);
-	time << setfill('0') << setw(2) << HOURS - hours << ":" << setfill('0') << setw(2) << MINUTES - minutes << ":" << setfill('0') << setw(2) << SECONDS - seconds;
+	this->seconds = (int) (miliseconds / 1000) % 60;
+	this->minutes = (int) ((miliseconds / (1000*60)) % 60);
+	this->hours   = (int) ((miliseconds / (1000*60*60)) % 24);
+
+    cout << this->hours << " " << this->minutes << " " << this->seconds << " " << miliseconds << " " << endl;
+	time << setfill('0') << setw(2) << HOURS - this->hours << ":" << setfill('0') << setw(2) << MINUTES - this->minutes << ":" << setfill('0') << setw(2) << SECONDS - this->seconds;
 	return time.str();
 }
 

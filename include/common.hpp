@@ -13,12 +13,12 @@
 #include "../include/ltexture.hpp"
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 1025;
+const int SCREEN_HEIGHT = 575;
 
-const short int HOURS = 0;
-const short int MINUTES = 0;
-const short int SECONDS = 15;
+const short int HOURS = 00;
+const short int MINUTES = 05;
+const short int SECONDS = 59;
 
 const short int NUMBER_OF_FAULTS = 2;
 

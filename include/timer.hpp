@@ -22,6 +22,11 @@ class Timer
 		bool isPaused();
 		
         std::string showCurrentTime();
+		std::string formatTime(Uint32 mlseconds);
+
+		int seconds;
+		int minutes;
+		int hours;
 
     private:
 		Uint32 gameStartTicks;
@@ -29,6 +34,7 @@ class Timer
 
 		bool gamePaused;
 		bool gameStarted;
+
 };
 
 #endif

@@ -16,6 +16,30 @@ class Interface
 {
 public:
     Interface();
+
+    SDL_Window* gWindow;
+    SDL_Renderer* gRenderer;
+    
+    TTF_Font* gFont;
+    TTF_Font* gFontTimer;
+    SDL_Texture* gTexture;
+
+    LTexture playerTimeDarkTexture;
+    LTexture playerTimeLightTexture;
+    LTexture playerFailuresDarkTexture;
+    LTexture playerFailuresLightTexture;
+    LTexture gStatusGameTexture;
+    LTexture gInfoTexture;
+    LTexture gSpriteSheetTexture;
+    
+    bool gameHasStarted;
+
+    bool initLibsSDL();
+    bool initInterface();
+    bool loadMedias();
+    void close();
+    void renderElements();
+    void updateElements(pair<Player, Player> players);
     
     void setInformation(string info);
     string getInformation();
@@ -26,9 +50,11 @@ public:
     void setLightCurrentPlayer(bool currentPlayer);
     bool isLightCurrentPlayer();
 
-    pair<Player, Player> controlTime(SDL_Event e, pair<Player, Player> players, 
+    pair<Player, Player> controlTime(string statusOfInformation, pair<Player, Player> players,
         Interface* interface);
-    void drawRet(SDL_Renderer* gRenderer, string statusOfInformation);
+        
+    void drawBackgroundInterface(string statusOfInformation);
+    pair<bool, string> isGameOver(pair<Player, Player> players);
 
 private:
     string informationGame;
