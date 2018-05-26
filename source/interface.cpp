@@ -79,54 +79,54 @@ string Interface::getInformation()
     return informationGame;
 }
 
-pair<Player, Player> Interface::controlTime(string statusOfInformation,
-    pair<Player, Player> players, Interface* interface){
+void Interface::controlTime(string statusOfInformation,
+    pair<Player, Player> *players, Interface* interface){
 	
 	string statusGameText = "../assets/imgs/play.png";
 
 	if(statusOfInformation == "15" or statusOfInformation == "11")
 	{
-		if( players.second.timer.isStarted() and players.first.timer.isStarted() and statusOfInformation == "15")
+		if( players->second.timer.isStarted() and players->first.timer.isStarted() and statusOfInformation == "15")
 		{
-			players.second.timer.stop();
-			players.first.timer.stop();
+			players->second.timer.stop();
+			players->first.timer.stop();
 			this->gameHasStarted = false;
 		}
 		else if( !this->gameHasStarted )
 		{
 		
-			players.first.timer.start();
-			players.second.timer.start();
-			players.second.timer.pause();
+			players->first.timer.start();
+			players->second.timer.start();
+			players->second.timer.pause();
 			this->gameHasStarted = true;
 		}
 	}
 	else if( statusOfInformation == "12" or statusOfInformation == "13" )
 	{
-		if( players.first.timer.isPaused() and players.second.timer.isPaused() and statusOfInformation == "13" )
+		if( players->first.timer.isPaused() and players->second.timer.isPaused() and statusOfInformation == "13" )
 		{
-			(interface->isLightCurrentPlayer()) ? players.first.timer.unpause():
-				players.second.timer.unpause();
+			(interface->isLightCurrentPlayer()) ? players->first.timer.unpause():
+				players->second.timer.unpause();
 			
 			statusGameText = "../assets/imgs/pause.png";
 		}
 		else
 		{
-			players.first.timer.pause();
-			players.second.timer.pause();
+			players->first.timer.pause();
+			players->second.timer.pause();
 		}
 	}
 	else if( statusOfInformation == "14" )
 	{
-		if (players.second.timer.isPaused())
+		if (players->second.timer.isPaused())
 		{
-			players.second.timer.unpause();
-			players.first.timer.pause();
+			players->second.timer.unpause();
+			players->first.timer.pause();
 
 			interface->setLightCurrentPlayer(false);
 		} else {
-			players.second.timer.pause();
-			players.first.timer.unpause();
+			players->second.timer.pause();
+			players->first.timer.unpause();
 
 			interface->setLightCurrentPlayer(true);
 		}
@@ -135,19 +135,10 @@ pair<Player, Player> Interface::controlTime(string statusOfInformation,
 	}
 	
 	interface->setStatusGame(statusGameText);
-
-	return players;
 }
 
 
 void Interface::drawBackgroundInterface(string statusOfInformation){
-	SDL_Rect blackRet = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2 };
-	SDL_SetRenderDrawColor( this->gRenderer, 0x00, 0x00, 0x00, 0x00 );		
-	SDL_RenderFillRect( this->gRenderer, &blackRet );
-	SDL_Rect whiteRet = { SCREEN_WIDTH / 500, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
-	SDL_SetRenderDrawColor( this->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );		
-	SDL_RenderFillRect( this->gRenderer, &whiteRet );
-	
 	int* color = new int [4];
 
 	if(statusOfInformation == "32"){ // Yellow
@@ -176,6 +167,14 @@ void Interface::drawBackgroundInterface(string statusOfInformation){
 		color[1] = 211;
 		color[0] = 211;
 	}
+  //TO DO destroy whiteRet and fillReact2
+	SDL_Rect whiteRet = { SCREEN_WIDTH / 500, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+	SDL_SetRenderDrawColor( this->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );		
+	SDL_RenderFillRect( this->gRenderer, &whiteRet );
+
+  SDL_Rect blackRet = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2 };
+	SDL_SetRenderDrawColor( this->gRenderer, 0x00, 0x00, 0x00, 0x00 );
+	SDL_RenderFillRect( this->gRenderer, &blackRet );
 	
 	SDL_Rect fillRect2 = { 1, SCREEN_HEIGHT / SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT/2};
 	SDL_SetRenderDrawColor( gRenderer, color[3], color[2], color[1], color[0] );		
@@ -262,23 +261,23 @@ bool Interface::loadMedias()
 
 
 
-void Interface::updateElements(pair<Player, Player> players){
+void Interface::updateElements(pair<Player, Player> *players){
 	SDL_Color textColorBlack = { 0, 0, 0, 255 };
 	SDL_Color textColorWhite = { 255, 255, 255, 255 };
 	
-	if( !playerTimeLightTexture.loadFromRenderedText( players.first.timer.showCurrentTime(), textColorBlack, this->gRenderer, this->gFontTimer ) )
+	if( !playerTimeLightTexture.loadFromRenderedText( players->first.timer.showCurrentTime(), textColorBlack, this->gRenderer, this->gFontTimer ) )
 	{
 		printf( "Unable to render time texture!\n" );
 	}
-	if( !playerTimeDarkTexture.loadFromRenderedText( players.second.timer.showCurrentTime(), textColorWhite, this->gRenderer, this->gFontTimer ) )
+	if( !playerTimeDarkTexture.loadFromRenderedText( players->second.timer.showCurrentTime(), textColorWhite, this->gRenderer, this->gFontTimer ) )
 	{
 		printf( "Unable to render time texture!\n" );
 	}
-	if( !playerFailuresDarkTexture.loadFromRenderedText( players.first.getFaults(), textColorWhite, this->gRenderer, this->gFontTimer ) )
+	if( !playerFailuresDarkTexture.loadFromRenderedText( players->first.getFaults(), textColorWhite, this->gRenderer, this->gFontTimer ) )
 	{
 		printf( "Unable to render time texture!\n" );
 	}
-	if( !playerFailuresLightTexture.loadFromRenderedText( players.second.getFaults(), textColorBlack, this->gRenderer, this->gFontTimer ) )
+	if( !playerFailuresLightTexture.loadFromRenderedText( players->second.getFaults(), textColorBlack, this->gRenderer, this->gFontTimer ) )
 	{
 		printf( "Unable to render time texture!\n" );
 	}
@@ -330,22 +329,21 @@ bool Interface::initInterface(){
 	return sucess;
 }
 
-pair<bool, string> Interface::isGameOver(pair<Player, Player> players){
-    pair<bool, string> gameOver (false, "");
-    if(players.first.lostGamePerFault()){
-        gameOver.first = true;
-        gameOver.second = "White player has lost per fault";
-    } else if(players.second.lostGamePerFault()){
-        gameOver.first = true;
-        gameOver.second = "Dark player has lost per fault";
+void Interface::isGameOver(pair<Player, Player>* players,
+    pair<bool, string>* gameOver){
+    if(players->first.lostGamePerFault()){
+        gameOver->first = true;
+        gameOver->second = "White player has lost per fault";
+    } else if(players->second.lostGamePerFault()){
+        gameOver->first = true;
+        gameOver->second = "Dark player has lost per fault";
     }
-    if (players.second.lostGamePerTime()){
-        gameOver.first = true;
-        gameOver.second = "Dark player has lost per time";
-    } else if (players.first.lostGamePerTime())
+    if (players->second.lostGamePerTime()){
+        gameOver->first = true;
+        gameOver->second = "Dark player has lost per time";
+    } else if (players->first.lostGamePerTime())
     {
-        gameOver.first = true;  
-        gameOver.second = "White player has lost per time";
+        gameOver->first = true;  
+        gameOver->second = "White player has lost per time";
     }
-    return gameOver;
 }

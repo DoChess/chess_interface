@@ -13,6 +13,7 @@ class Player
 {
   public:
     Player();
+    ~Player();
     Timer timer;
 
     std::string getFaults();

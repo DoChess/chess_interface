@@ -39,7 +39,7 @@ public:
     bool initInterface();
     bool loadMedias();
     void renderElements();
-    void updateElements(pair<Player, Player> players);
+    void updateElements(pair<Player, Player> *players);
     
     void setInformation(string info);
     string getInformation();
@@ -50,11 +50,11 @@ public:
     void setLightCurrentPlayer(bool currentPlayer);
     bool isLightCurrentPlayer();
 
-    pair<Player, Player> controlTime(string statusOfInformation, pair<Player, Player> players,
+    void controlTime(string statusOfInformation, pair<Player, Player> *players,
         Interface* interface);
         
     void drawBackgroundInterface(string statusOfInformation);
-    pair<bool, string> isGameOver(pair<Player, Player> players);
+    void isGameOver(pair<Player, Player>* players, pair<bool, string>* gameOver);
 
 private:
     string informationGame;

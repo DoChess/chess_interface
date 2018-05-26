@@ -8,6 +8,11 @@ Player::Player()
     faults = NUMBER_OF_FAULTS;
     cout << "Player created successfuly" << endl;
 }
+Player::~Player()
+{
+    faults = 0;
+    cout << "Player destroyed successfuly" << endl;
+}
 
 void Player::setFault()
 {
