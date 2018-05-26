@@ -7,12 +7,18 @@
 
 #define SHM_SIZE 1024  /* make it a 1K shared memory segment */
 
-key_t key;
-int shmid;
-char *data;
-int mode;
+int main(int argc, char *argv[])
+{
+  key_t key;
+  int shmid;
+  char *data;
+  int mode;
 
-void attach_memory(){
+  if (argc > 2) {
+    fprintf(stderr, "usage: shmdemo [data_to_write]\n");
+    exit(1);
+  }
+
   /* make the key: */
   if ((key = ftok("/tmp/chess_shared_memory.txt", 'R')) == -1) /*Here the file must exist */ 
   {
@@ -27,25 +33,24 @@ void attach_memory(){
   }
 
   /* attach to the segment to get a pointer to it: */
-  data = (char*)shmat(shmid, (void *)0, 0);
+  data = (char *)shmat(shmid, (void *)0, 0);
   if (data == (char *)(-1)) {
     perror("shmat");
     exit(1);
   }
 
-  ///* read or modify the segment, based on the command line: */
-  //if (argc == 2) {
-  //  printf("writing to segment: \"%s\"\n", argv[1]);
-  //  strncpy(data, argv[1], SHM_SIZE);
-  //} else
-  //  printf("segment contains: \"%s\"\n", data);
+  /* read or modify the segment, based on the command line: */
+  if (argc == 2) {
+    printf("writing to segment: \"%s\"\n", argv[1]);
+    strncpy(data, argv[1], SHM_SIZE);
+  } else
+    printf("segment contains: \"%s\"\n", data);
 
-}
-
-void detach_memory(){
   /* detach from the segment: */
   if (shmdt(data) == -1) {
     perror("shmdt");
     exit(1);
   }
+
+  return 0;
 }
