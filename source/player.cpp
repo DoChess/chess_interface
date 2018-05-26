@@ -10,7 +10,7 @@ Player::Player()
 }
 Player::~Player()
 {
-    faults = 0;
+    faults = NUMBER_OF_FAULTS;
     cout << "Player destroyed successfuly" << endl;
 }
 
@@ -28,7 +28,7 @@ string Player::getFaults()
 
 bool Player::lostGamePerFault()
 {
-    return (faults >= 0) ? false : true;
+    return (faults > 0) ? false : true;
 }
 
 bool Player::lostGamePerTime()

@@ -33,8 +33,6 @@ public:
     LTexture gInfoTexture;
     LTexture gSpriteSheetTexture;
     
-    bool gameHasStarted;
-
     bool initLibsSDL();
     bool initInterface();
     bool loadMedias();
@@ -53,7 +51,7 @@ public:
     void controlTime(string statusOfInformation, pair<Player, Player> *players,
         Interface* interface);
         
-    void drawBackgroundInterface(string statusOfInformation);
+    void drawBackgroundInterface(string statusOfInformation );
     void isGameOver(pair<Player, Player>* players, pair<bool, string>* gameOver);
 
 private:

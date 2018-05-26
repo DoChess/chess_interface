@@ -50,6 +50,7 @@ int main( int argc, char* args[] )
         {
           information_color_background = status_of_information.substr(0, 2);
           information = status_of_information.erase(0,3);
+          interface.isLightCurrentPlayer() ? players.second.setFault() : players.first.setFault();
         }
       } 
 
@@ -61,6 +62,7 @@ int main( int argc, char* args[] )
         information = endGame.second;
         interface.controlTime("15", &players, &interface);
         strncpy(data, "15", SHM_SIZE);
+        endGame.second = "None";
       }
 
       interface.setInformation( information );
