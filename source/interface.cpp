@@ -12,7 +12,7 @@ Interface::Interface()
   gFont = NULL;
   gFontTimer = NULL;
   gTexture = NULL;
-  cout << "Interface created successfully" << endl; 
+  cout << "Interface created successfully" << endl;
 }
 
 Interface::~Interface()
@@ -45,7 +45,7 @@ Interface::~Interface()
   TTF_Quit();
   IMG_Quit();
   SDL_Quit();
-  cout << "Interface deleted successfully" << endl; 
+  cout << "Interface deleted successfully" << endl;
 }
 
 void Interface::setStatusGame(string status)
@@ -164,7 +164,7 @@ void Interface::drawBackgroundInterface(string statusOfInformation){
   }
   //TO DO destroy whiteRet and fillReact2
   SDL_Rect whiteRet = { SCREEN_WIDTH / 500, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
-  SDL_SetRenderDrawColor( this->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );		
+  SDL_SetRenderDrawColor( this->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
   SDL_RenderFillRect( this->gRenderer, &whiteRet );
 
   SDL_Rect blackRet = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2 };
@@ -172,7 +172,7 @@ void Interface::drawBackgroundInterface(string statusOfInformation){
   SDL_RenderFillRect( this->gRenderer, &blackRet );
 
   SDL_Rect fillRect2 = { 1, SCREEN_HEIGHT / SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT/2};
-  SDL_SetRenderDrawColor( gRenderer, color[3], color[2], color[1], color[0] );		
+  SDL_SetRenderDrawColor( gRenderer, color[3], color[2], color[1], color[0] );
   SDL_RenderFillRect( gRenderer, &fillRect2 );
 
   delete color;
@@ -181,167 +181,167 @@ void Interface::drawBackgroundInterface(string statusOfInformation){
 
 bool Interface::initLibsSDL()
 {
-  bool success = true;
+    bool success = true;
 
-  if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-  {
-    printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
-    success = false;
-  }
-  else
-  {
-    if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
+    if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
     {
-      printf( "Warning: Linear texture filtering not enabled!" );
-    }
-
-    this->gWindow = SDL_CreateWindow( "Chess Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
-    if( this->gWindow == NULL )
-    {
-      printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
-      success = false;
+        printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
+        success = false;
     }
     else
     {
-      this->gRenderer = SDL_CreateRenderer( this->gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-      if( this->gRenderer == NULL )
-      {
-        printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
-        success = false;
-      }
-      else
-      {
-        SDL_SetRenderDrawColor( this->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-
-        int imgFlags = IMG_INIT_PNG;
-        if( !( IMG_Init( imgFlags ) & imgFlags ) )
+        if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
         {
-          printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
-          success = false;
+            printf( "Warning: Linear texture filtering not enabled!" );
         }
 
-        if( TTF_Init() == -1 )
+        this->gWindow = SDL_CreateWindow( "Chess Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+        if( this->gWindow == NULL )
         {
-          printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
-          success = false;
+            printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
+            success = false;
         }
-      }
+        else
+        {
+            this->gRenderer = SDL_CreateRenderer( this->gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+            if( this->gRenderer == NULL )
+            {
+                printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
+                success = false;
+            }
+            else
+            {
+                SDL_SetRenderDrawColor( this->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+
+                int imgFlags = IMG_INIT_PNG;
+                if( !( IMG_Init( imgFlags ) & imgFlags ) )
+                {
+                    printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+                    success = false;
+                }
+
+                if( TTF_Init() == -1 )
+                {
+                    printf( "SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError() );
+                    success = false;
+                }
+            }
+        }
     }
-  }
 
-  return success;
+    return success;
 }
 
 bool Interface::loadMedias()
 {
-  bool success = true;
+    bool success = true;
 
-  this->gFontTimer = TTF_OpenFont( "../assets/font/lazy.ttf", 120 );
-  this->gFont = TTF_OpenFont( "../assets/font/lemon.ttf", 60 );
+    this->gFontTimer = TTF_OpenFont( "../assets/font/lazy.ttf", 120 );
+    this->gFont = TTF_OpenFont( "../assets/font/lemon.ttf", 60 );
 
-  if( this->gFont == NULL )
-  {
-    printf( "Failed to load information font! SDL_ttf Error: %s\n", TTF_GetError() );
-    success = false;
-  }
-  if( this->gFontTimer == NULL )
-  {
-    printf( "Failed to load timer font! SDL_ttf Error: %s\n", TTF_GetError() );
-    success = false;
-  }
+    if( this->gFont == NULL )
+    {
+        printf( "Failed to load information font! SDL_ttf Error: %s\n", TTF_GetError() );
+        success = false;
+    }
+    if( this->gFontTimer == NULL )
+    {
+        printf( "Failed to load timer font! SDL_ttf Error: %s\n", TTF_GetError() );
+        success = false;
+    }
 
 
-  return success;
+    return success;
 }
 
 
 
 void Interface::updateElements(pair<Player, Player> *players){
-  SDL_Color textColorBlack = { 0, 0, 0, 255 };
-  SDL_Color textColorWhite = { 255, 255, 255, 255 };
+    SDL_Color textColorBlack = { 0, 0, 0, 255 };
+    SDL_Color textColorWhite = { 255, 255, 255, 255 };
 
-  if( !playerTimeLightTexture.loadFromRenderedText( players->first.timer.showCurrentTime(), textColorBlack, this->gRenderer, this->gFontTimer ) )
-  {
-    printf( "Unable to render time texture!\n" );
-  }
-  if( !playerTimeDarkTexture.loadFromRenderedText( players->second.timer.showCurrentTime(), textColorWhite, this->gRenderer, this->gFontTimer ) )
-  {
-    printf( "Unable to render time texture!\n" );
-  }
-  if( !playerFailuresDarkTexture.loadFromRenderedText( players->first.getFaults(), textColorWhite, this->gRenderer, this->gFontTimer ) )
-  {
-    printf( "Unable to render time texture!\n" );
-  }
-  if( !playerFailuresLightTexture.loadFromRenderedText( players->second.getFaults(), textColorBlack, this->gRenderer, this->gFontTimer ) )
-  {
-    printf( "Unable to render time texture!\n" );
-  }
-  if( !gInfoTexture.loadFromRenderedText( this->getInformation(), textColorBlack, this->gRenderer, this->gFont ) )
-  {
-    printf( "Unable to render information texture!\n" );
-  }
-  if( !gStatusGameTexture.loadFromFile( this->getStatusGame(), this->gRenderer) )
-  {
-    printf( "Unable to render start/stop prompt texture!\n" );
-  }
+    if( !playerTimeLightTexture.loadFromRenderedText( players->first.timer.showCurrentTime(), textColorBlack, this->gRenderer, this->gFontTimer ) )
+    {
+        printf( "Unable to render time texture!\n" );
+    }
+    if( !playerTimeDarkTexture.loadFromRenderedText( players->second.timer.showCurrentTime(), textColorWhite, this->gRenderer, this->gFontTimer ) )
+    {
+        printf( "Unable to render time texture!\n" );
+    }
+    if( !playerFailuresDarkTexture.loadFromRenderedText( players->first.getFaults(), textColorWhite, this->gRenderer, this->gFontTimer ) )
+    {
+        printf( "Unable to render time texture!\n" );
+    }
+    if( !playerFailuresLightTexture.loadFromRenderedText( players->second.getFaults(), textColorBlack, this->gRenderer, this->gFontTimer ) )
+    {
+        printf( "Unable to render time texture!\n" );
+    }
+    if( !gInfoTexture.loadFromRenderedText( this->getInformation(), textColorBlack, this->gRenderer, this->gFont ) )
+    {
+        printf( "Unable to render information texture!\n" );
+    }
+    if( !gStatusGameTexture.loadFromFile( this->getStatusGame(), this->gRenderer) )
+    {
+        printf( "Unable to render start/stop prompt texture!\n" );
+    }
 }
 
 void Interface::renderElements(){
-  short timeHeight = (((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight()) / 2.5);
-  short failureHeight = (((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight()) / 7.5);
+    short timeHeight = (((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight()) / 2.5);
+    short failureHeight = (((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight())) / 2) + ((SCREEN_HEIGHT - playerTimeDarkTexture.getHeight()) / 7.5);
 
-  short lightWidth = (SCREEN_WIDTH - playerTimeLightTexture.getWidth()) / 11;
-  short darkWidth = ((SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 2) + ((SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 2.5);
+    short lightWidth = (SCREEN_WIDTH - playerTimeLightTexture.getWidth()) / 11;
+    short darkWidth = ((SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 2) + ((SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 2.5);
 
-  //short lightFailureWidth = (SCREEN_WIDTH - playerFailuresLightTexture.getWidth()*1) / 15;
-  //short darkFailureWidth = (SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) - ((SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 250);
-  short lightFailureWidth = (SCREEN_WIDTH - playerFailuresLightTexture.getWidth()*1) / 2.4;
-  short darkFailureWidth = SCREEN_WIDTH - playerTimeDarkTexture.getWidth() - 55;
+    //short lightFailureWidth = (SCREEN_WIDTH - playerFailuresLightTexture.getWidth()*1) / 15;
+    //short darkFailureWidth = (SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) - ((SCREEN_WIDTH - playerTimeDarkTexture.getWidth()) / 250);
+    short lightFailureWidth = (SCREEN_WIDTH - playerFailuresLightTexture.getWidth()*1) / 2.4;
+    short darkFailureWidth = SCREEN_WIDTH - playerTimeDarkTexture.getWidth() - 55;
 
-  gInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 4), this->gRenderer );
+    gInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 4), this->gRenderer );
 
-  playerTimeDarkTexture.render( darkWidth, timeHeight , this->gRenderer );
-  playerFailuresDarkTexture.render( darkFailureWidth, failureHeight, this->gRenderer );
+    playerTimeDarkTexture.render( darkWidth, timeHeight , this->gRenderer );
+    playerFailuresDarkTexture.render( darkFailureWidth, failureHeight, this->gRenderer );
 
-  playerFailuresLightTexture.render( lightFailureWidth, failureHeight, this->gRenderer );
-  playerTimeLightTexture.render( lightWidth , timeHeight, this->gRenderer );
+    playerFailuresLightTexture.render( lightFailureWidth, failureHeight, this->gRenderer );
+    playerTimeLightTexture.render( lightWidth , timeHeight, this->gRenderer );
 
-  gStatusGameTexture.render( (SCREEN_WIDTH - gStatusGameTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStatusGameTexture.getHeight()) / 16, this->gRenderer );
+    gStatusGameTexture.render( (SCREEN_WIDTH - gStatusGameTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStatusGameTexture.getHeight()) / 16, this->gRenderer );
 }
 
 bool Interface::initInterface(){
-  bool sucess = true;
-  if( !this->initLibsSDL() )
-  {
-    printf( "Failed to initialize graphic interface!\n" );
-    sucess = false;
-  }
-  else
-  {
-    if( !this->loadMedias() )
+    bool sucess = true;
+    if( !this->initLibsSDL() )
     {
-      printf( "Failed to load medias!\n" );
-      sucess = false;
+        printf( "Failed to initialize graphic interface!\n" );
+        sucess = false;
     }
-  }
-  return sucess;
+    else
+    {
+        if( !this->loadMedias() )
+        {
+            printf( "Failed to load medias!\n" );
+            sucess = false;
+        }
+    }
+    return sucess;
 }
 
 void Interface::isGameOver(pair<Player, Player>* players,
-    pair<bool, string>* gameOver){
-  if(players->first.lostGamePerFault()){
-    gameOver->first = true;
-    gameOver->second = "White player has lost per fault";
-  } else if(players->second.lostGamePerFault()){
-    gameOver->first = true;
-    gameOver->second = "Dark player has lost per fault";
-  }
-  if (players->second.lostGamePerTime()){
-    gameOver->first = true;
-    gameOver->second = "Dark player has lost per time";
-  } else if (players->first.lostGamePerTime())
-  {
-    gameOver->first = true;  
-    gameOver->second = "White player has lost per time";
-  }
+        pair<bool, string>* gameOver){
+    if(players->first.lostGamePerFault()){
+        gameOver->first = true;
+        gameOver->second = "White player has lost per fault";
+    } else if(players->second.lostGamePerFault()){
+        gameOver->first = true;
+        gameOver->second = "Dark player has lost per fault";
+    }
+    if (players->second.lostGamePerTime()){
+        gameOver->first = true;
+        gameOver->second = "Dark player has lost per time";
+    } else if (players->first.lostGamePerTime())
+    {
+        gameOver->first = true;
+        gameOver->second = "White player has lost per time";
+    }
 }
