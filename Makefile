@@ -2,6 +2,7 @@ BINFOLDER := bin/
 INCFOLDER := include/
 OBJFOLDER := obj/
 SRCFOLDER := source/
+CREATE_OBJ_FOLDER := $(shell mkdir -p $(OBJFOLDER))
 
 CC := g++
 CFLAGS := -std=c++11 -Wall -ansi -Wshadow
@@ -11,6 +12,7 @@ SRCFILES := $(wildcard source/*.cpp)
 
 all: $(SRCFILES:source/%.cpp=obj/%.o)
 		$(CC) $(CFLAGS) $(LINKER_FLAGS) obj/*.o -o bin/finalBinary
+		touch /tmp/chess_shared_memory.txt
 
 obj/%.o: source/%.cpp
 		$(CC) $(CFLAGS) $(LINKER_FLAGS) -c $< -o $@ -I./include
