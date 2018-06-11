@@ -268,11 +268,11 @@ void Interface::updateElements(pair<Player, Player> *players){
     {
         printf( "Unable to render time texture!\n" );
     }
-    if( !playerFailuresDarkTexture.loadFromRenderedText( players->first.getFaults(), textColorWhite, this->gRenderer, this->gFontTimer ) )
+    if( !playerFailuresDarkTexture.loadFromRenderedText( players->second.getFaults(), textColorWhite, this->gRenderer, this->gFontTimer ) )
     {
         printf( "Unable to render time texture!\n" );
     }
-    if( !playerFailuresLightTexture.loadFromRenderedText( players->second.getFaults(), textColorBlack, this->gRenderer, this->gFontTimer ) )
+    if( !playerFailuresLightTexture.loadFromRenderedText( players->first.getFaults(), textColorBlack, this->gRenderer, this->gFontTimer ) )
     {
         printf( "Unable to render time texture!\n" );
     }

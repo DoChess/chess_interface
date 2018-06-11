@@ -2,6 +2,7 @@ BINFOLDER := bin/
 INCFOLDER := include/
 OBJFOLDER := obj/
 SRCFOLDER := source/
+CREATE_OBJ_FOLDER := $(shell mkdir -p $(OBJFOLDER))
 
 CC := g++
 CFLAGS := -std=c++11 -Wall -ansi -Wshadow

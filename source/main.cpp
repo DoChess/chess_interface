@@ -52,6 +52,7 @@ int main( int argc, char* args[] )
                     {
                         if (status_of_information[1] == '0'){
                             cout << status_of_information << endl;
+                            cout << interface.isLightCurrentPlayer() << endl;
                             interface.isLightCurrentPlayer() ? players.first.setFault() : players.second.setFault();
                         }
                         information_color_background = status_of_information.substr(0, 2);
