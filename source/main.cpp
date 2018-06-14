@@ -15,7 +15,7 @@ int main( int argc, char* args[] )
 
     if( interface.initInterface() )
     {
-        while(qtd_matches<3){
+        while(qtd_matches<1){
             Player lightPlayer, darkPlayer;
             pair<Player, Player> players (lightPlayer, darkPlayer);
 
@@ -39,25 +39,24 @@ int main( int argc, char* args[] )
                 {
                     string data_of_control_package(data);
                     if(data_of_control_package != "None"){
-                        char teste[5] = "None";
+                        char data_write[5] = "None";
                         status_of_information = data_of_control_package;
-                        strncpy(data, teste, SHM_SIZE);
-                    }
-                    if (status_of_information[0] == '1')
-                    {
-                        interface.controlTime(status_of_information, &players, &interface);
-                        status_of_information = "None";
-                    }
-                    else if (status_of_information[0] == '3')
-                    {
-                        if (status_of_information[1] == '0'){
-                            cout << status_of_information << endl;
-                            cout << interface.isLightCurrentPlayer() << endl;
-                            interface.isLightCurrentPlayer() ? players.first.setFault() : players.second.setFault();
+                        strncpy(data, data_write, SHM_SIZE);
+
+                        if (status_of_information[0] == '1')
+                        {
+                            interface.controlTime(status_of_information, &players, &interface);
                         }
-                        information_color_background = status_of_information.substr(0, 2);
-                        information = status_of_information.erase(0,3);
+                        else if (status_of_information[0] == '3')
+                        {
+                            if (status_of_information[1] == '0'){
+                                interface.isLightCurrentPlayer() ? players.first.setFault() : players.second.setFault();
+                            }
+                            information_color_background = status_of_information.substr(0, 2);
+                            information = status_of_information.erase(0,3);
+                        }
                     }
+
                 }
 
                 interface.updateElements( &players );
@@ -78,6 +77,7 @@ int main( int argc, char* args[] )
                 interface.renderElements();
                 SDL_RenderPresent( interface.gRenderer );
             }
+
             qtd_matches++;
             cout << "Next game" << endl;
             lightPlayer.~Player();

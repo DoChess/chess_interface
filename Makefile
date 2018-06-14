@@ -12,6 +12,7 @@ SRCFILES := $(wildcard source/*.cpp)
 
 all: $(SRCFILES:source/%.cpp=obj/%.o)
 		$(CC) $(CFLAGS) $(LINKER_FLAGS) obj/*.o -o bin/finalBinary
+		touch /tmp/chess_shared_memory.txt
 
 obj/%.o: source/%.cpp
 		$(CC) $(CFLAGS) $(LINKER_FLAGS) -c $< -o $@ -I./include
