@@ -30,7 +30,7 @@ int main( int argc, char* args[] )
             attach_memory();
             while( !quit )
             {
-                if( SDL_PollEvent( &e )!=0 && e.type == SDL_QUIT )
+                if( SDL_PollEvent( &e ) != 0 && e.type == SDL_QUIT )
                 {
                     std::cout << "\nWindown closed\n\n";
                     quit = true;
@@ -53,6 +53,7 @@ int main( int argc, char* args[] )
                                 interface.isLightCurrentPlayer() ? players.first.setFault() : players.second.setFault();
                             }
                             information_color_background = status_of_information.substr(0, 2);
+                            interface.drawBackgroundInterface( information_color_background );
                             information = status_of_information.erase(0,3);
                         }
                     }
@@ -72,10 +73,10 @@ int main( int argc, char* args[] )
                 }
 
                 interface.setInformation( information );
-                interface.drawBackgroundInterface( information_color_background );
 
                 interface.renderElements();
                 SDL_RenderPresent( interface.gRenderer );
+                SDL_RenderClear(interface.gRenderer);
             }
 
             qtd_matches++;
