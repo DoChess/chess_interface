@@ -4,178 +4,172 @@ using namespace std;
 
 Interface::Interface()
 {
-  informationGame = "Chess Game";
-  statusGame = "../assets/imgs/play.png";
-  lightCurrentPlayer = true;
-  gWindow = NULL;
-  gRenderer = NULL;
-  gFont = NULL;
-  gFontTimer = NULL;
-  gTexture = NULL;
-  cout << "Interface created successfully" << endl;
+    informationGame = "Chess Game";
+    statusGame = "../assets/imgs/play.png";
+    lightCurrentPlayer = true;
+    gWindow = NULL;
+    gRenderer = NULL;
+    gFont = NULL;
+    gFontTimer = NULL;
+    gTexture = NULL;
+    cout << "Interface created successfully" << endl;
 }
 
 Interface::~Interface()
 {
-  playerTimeDarkTexture.free();
-  playerFailuresDarkTexture.free();
+    playerTimeDarkTexture.free();
+    playerFailuresDarkTexture.free();
 
-  playerTimeLightTexture.free();
-  playerFailuresLightTexture.free();
+    playerTimeLightTexture.free();
+    playerFailuresLightTexture.free();
 
-  gStatusGameTexture.free();
-  gSpriteSheetTexture.free();
-  gInfoTexture.free();
+    gStatusGameTexture.free();
+    gSpriteSheetTexture.free();
+    gInfoTexture.free();
 
-  SDL_DestroyTexture( this->gTexture );
-  this->gTexture = NULL;
+    SDL_DestroyTexture( this->gTexture );
+    this->gTexture = NULL;
 
-  TTF_CloseFont( this->gFont );
-  this->gFont = NULL;
+    TTF_CloseFont( this->gFont );
+    this->gFont = NULL;
 
-  TTF_CloseFont( this->gFontTimer );
-  this->gFontTimer = NULL;
+    TTF_CloseFont( this->gFontTimer );
+    this->gFontTimer = NULL;
 
-  SDL_DestroyRenderer( this->gRenderer );
-  this->gRenderer = NULL;
+    SDL_DestroyRenderer( this->gRenderer );
+    this->gRenderer = NULL;
 
-  SDL_DestroyWindow( this->gWindow );
-  this->gWindow = NULL;
+    SDL_DestroyWindow( this->gWindow );
+    this->gWindow = NULL;
 
-  TTF_Quit();
-  IMG_Quit();
-  SDL_Quit();
-  cout << "Interface deleted successfully" << endl;
+    TTF_Quit();
+    IMG_Quit();
+    SDL_Quit();
+    cout << "Interface deleted successfully" << endl;
 }
 
 void Interface::setStatusGame(string status)
 {
-  statusGame = status;
+    statusGame = status;
 }
 
 string Interface::getStatusGame()
 {
-  return statusGame;
+    return statusGame;
 }
 
 void Interface::setLightCurrentPlayer(bool currentPlayer)
 {
-  lightCurrentPlayer = currentPlayer;
+    lightCurrentPlayer = currentPlayer;
 }
 
 bool Interface::isLightCurrentPlayer()
 {
-  return lightCurrentPlayer;
+    return lightCurrentPlayer;
 }
 
 void Interface::setInformation(string info)
 {
-  informationGame = info;
+    informationGame = info;
 }
 
 string Interface::getInformation()
 {
-  return informationGame;
+    return informationGame;
 }
 
 void Interface::controlTime(string statusOfInformation,
-    pair<Player, Player> *players, Interface* interface){
+        pair<Player, Player> *players, Interface* interface){
 
-  string statusGameText = "../assets/imgs/play.png";
+    string statusGameText = "../assets/imgs/play.png";
 
-  if(statusOfInformation == "15" or statusOfInformation == "11")
-  {
-    if(statusOfInformation == "15")
+    if( statusOfInformation == "14" )
     {
-      players->second.timer.stop();
-      players->first.timer.stop();
+        if (players->second.timer.isPaused())
+        {
+            players->second.timer.unpause();
+            players->first.timer.pause();
+
+            interface->setLightCurrentPlayer(false);
+        } else {
+            players->second.timer.pause();
+            players->first.timer.unpause();
+
+            interface->setLightCurrentPlayer(true);
+        }
+
+        statusGameText = "../assets/imgs/pause.png";
     }
-    else 
+    else if (statusOfInformation == "11")
     {
-      players->first.timer.start();
-      players->second.timer.start();
-      players->second.timer.pause();
+        players->first.timer.start();
+        players->second.timer.start();
+        players->second.timer.pause();
     }
-  }
-  else if( statusOfInformation == "12" or statusOfInformation == "13" )
-  {
-    if( players->first.timer.isPaused() and players->second.timer.isPaused() and statusOfInformation == "13" )
+    else if(statusOfInformation == "15")
     {
-      (interface->isLightCurrentPlayer()) ? players->first.timer.unpause():
-        players->second.timer.unpause();
-
-      statusGameText = "../assets/imgs/pause.png";
+        players->second.timer.stop();
+        players->first.timer.stop();
     }
-    else
+    else if( players->first.timer.isPaused() and players->second.timer.isPaused() and statusOfInformation == "13" )
     {
-      players->first.timer.pause();
-      players->second.timer.pause();
+        (interface->isLightCurrentPlayer()) ? players->first.timer.unpause():
+            players->second.timer.unpause();
+
+        statusGameText = "../assets/imgs/pause.png";
     }
-  }
-  else if( statusOfInformation == "14" )
-  {
-    if (players->second.timer.isPaused())
+    else if(statusOfInformation == "12")
     {
-      players->second.timer.unpause();
-      players->first.timer.pause();
-
-      interface->setLightCurrentPlayer(false);
-    } else {
-      players->second.timer.pause();
-      players->first.timer.unpause();
-
-      interface->setLightCurrentPlayer(true);
+        players->first.timer.pause();
+        players->second.timer.pause();
     }
 
-    statusGameText = "../assets/imgs/pause.png";
-  }
-
-  interface->setStatusGame(statusGameText);
+    interface->setStatusGame(statusGameText);
 }
 
 void Interface::drawBackgroundInterface(string statusOfInformation){
-  int* color = new int [4];
+    int* color = new int [4];
 
-  if(statusOfInformation == "34"){ // Yellow
-    color[3] = 255;
-    color[2] = 255;
-    color[1] = 0;
-    color[0] = 0;
-  } else if(statusOfInformation == "33"){ // Blue
-    color[3] = 0;
-    color[2] = 96;
-    color[1] = 255;
-    color[0] = 255;
-  } else if(statusOfInformation == "31"){ // Green
-    color[3] = 13;
-    color[2] = 239;
-    color[1] = 66;
-    color[0] = 255;
-  } else if(statusOfInformation == "30"){ // Red
-    color[3] = 220;
-    color[2] = 61;
-    color[1] = 42;
-    color[0] = 255;
-  } else { // Gray
-    color[3] = 211;
-    color[2] = 211;
-    color[1] = 211;
-    color[0] = 211;
-  }
-  //TO DO destroy whiteRet and fillReact2
-  SDL_Rect whiteRet = { SCREEN_WIDTH / 500, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
-  SDL_SetRenderDrawColor( this->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-  SDL_RenderFillRect( this->gRenderer, &whiteRet );
+    if(statusOfInformation == "34"){ // Yellow
+        color[3] = 255;
+        color[2] = 255;
+        color[1] = 0;
+        color[0] = 0;
+    } else if(statusOfInformation == "33"){ // Blue
+        color[3] = 0;
+        color[2] = 96;
+        color[1] = 255;
+        color[0] = 255;
+    } else if(statusOfInformation == "31"){ // Green
+        color[3] = 13;
+        color[2] = 239;
+        color[1] = 66;
+        color[0] = 255;
+    } else if(statusOfInformation == "30"){ // Red
+        color[3] = 220;
+        color[2] = 61;
+        color[1] = 42;
+        color[0] = 255;
+    } else { // Gray
+        color[3] = 211;
+        color[2] = 211;
+        color[1] = 211;
+        color[0] = 211;
+    }
+    //TO DO destroy whiteRet and fillReact2
+    SDL_Rect whiteRet = { SCREEN_WIDTH / 500, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 };
+    SDL_SetRenderDrawColor( this->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+    SDL_RenderFillRect( this->gRenderer, &whiteRet );
 
-  SDL_Rect blackRet = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2 };
-  SDL_SetRenderDrawColor( this->gRenderer, 0x00, 0x00, 0x00, 0x00 );
-  SDL_RenderFillRect( this->gRenderer, &blackRet );
+    SDL_Rect blackRet = { SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2 };
+    SDL_SetRenderDrawColor( this->gRenderer, 0x00, 0x00, 0x00, 0x00 );
+    SDL_RenderFillRect( this->gRenderer, &blackRet );
 
-  SDL_Rect fillRect2 = { 1, SCREEN_HEIGHT / SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT/2};
-  SDL_SetRenderDrawColor( gRenderer, color[3], color[2], color[1], color[0] );
-  SDL_RenderFillRect( gRenderer, &fillRect2 );
+    SDL_Rect fillRect2 = { 1, SCREEN_HEIGHT / SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT/2};
+    SDL_SetRenderDrawColor( gRenderer, color[3], color[2], color[1], color[0] );
+    SDL_RenderFillRect( gRenderer, &fillRect2 );
 
-  delete color;
+    delete color;
 }
 
 

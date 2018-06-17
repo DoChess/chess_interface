@@ -9,7 +9,7 @@ int main( int argc, char* args[] )
 {
     Interface interface;
     short qtd_matches = 0;
-    string initial_information = "Welcome to chess";
+    string initial_information = "Welcome to chess game";
     string information = initial_information;
     initial_information = information;
 
@@ -39,23 +39,25 @@ int main( int argc, char* args[] )
                 {
                     string data_of_control_package(data);
                     if(data_of_control_package != "None"){
-                        char write_data[5] = "None";
                         status_of_information = data_of_control_package;
-                        strncpy(data, write_data, SHM_SIZE);
-                    }
-                    if (status_of_information[0] == '1')
-                    {
-                        interface.controlTime(status_of_information, &players, &interface);
-                    }
-                    else if (status_of_information[0] == '3')
-                    {
-                        if (status_of_information[1] == '0'){
-                            cout << status_of_information << endl;
-                            cout << interface.isLightCurrentPlayer() << endl;
-                            interface.isLightCurrentPlayer() ? players.first.setFault() : players.second.setFault();
+
+                        if (status_of_information[0] == '1')
+                        {
+                            interface.controlTime(status_of_information, &players, &interface);
+                            status_of_information = "None";
                         }
-                        information_color_background = status_of_information.substr(0, 2);
-                        information = status_of_information.erase(0,3);
+                        else if (status_of_information[0] == '3')
+                        {
+                            if (status_of_information[1] == '0'){
+                                cout << interface.isLightCurrentPlayer() << endl;
+                                interface.isLightCurrentPlayer() ? players.first.setFault() : players.second.setFault();
+                            }
+                            information_color_background = status_of_information.substr(0, 2);
+                            information = status_of_information.erase(0,3);
+                        }
+
+                        char write_data[5] = "None";
+                        strncpy(data, write_data, SHM_SIZE);
                     }
                 }
 
