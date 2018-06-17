@@ -231,7 +231,7 @@ bool Interface::loadMedias()
     bool success = true;
 
     this->gFontTimer = TTF_OpenFont( "../assets/font/lazy.ttf", 120 );
-    this->gFont = TTF_OpenFont( "../assets/font/lemon.ttf", 60 );
+    this->gFont = TTF_OpenFont( "../assets/font/lemon.ttf", 30 ); // 60
 
     if( this->gFont == NULL )
     {
@@ -326,14 +326,16 @@ void Interface::isGameOver(pair<Player, Player>* players,
     if(players->first.lostGamePerFault()){
         gameOver->first = true;
         gameOver->second = "White player has lost per fault";
-    } else if(players->second.lostGamePerFault()){
+    }
+    else if(players->second.lostGamePerFault()){
         gameOver->first = true;
         gameOver->second = "Dark player has lost per fault";
     }
     if (players->second.lostGamePerTime()){
         gameOver->first = true;
         gameOver->second = "Dark player has lost per time";
-    } else if (players->first.lostGamePerTime())
+    }
+    else if (players->first.lostGamePerTime())
     {
         gameOver->first = true;
         gameOver->second = "White player has lost per time";

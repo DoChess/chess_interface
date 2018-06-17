@@ -4,6 +4,12 @@
 #include "../shared_memory.cpp"
 
 using namespace std;
+string getCurrentPlayer(bool playerLight){
+    string player = "Dark";
+    if (playerLight)
+        player = "White";
+    return player;
+}
 
 int main( int argc, char* args[] )
 {
@@ -23,6 +29,8 @@ int main( int argc, char* args[] )
 
             string status_of_information = "None";
             string information_color_background = "None";
+            string player = "White";
+            string aux_information = "";
 
             bool quit = false;
             SDL_Event e;
@@ -40,7 +48,6 @@ int main( int argc, char* args[] )
                     string data_of_control_package(data);
                     if(data_of_control_package != "None"){
                         status_of_information = data_of_control_package;
-
                         if (status_of_information[0] == '1')
                         {
                             interface.controlTime(status_of_information, &players, &interface);
@@ -48,14 +55,38 @@ int main( int argc, char* args[] )
                         }
                         else if (status_of_information[0] == '3')
                         {
-                            if (status_of_information[1] == '0'){
-                                cout << interface.isLightCurrentPlayer() << endl;
-                                interface.isLightCurrentPlayer() ? players.first.setFault() : players.second.setFault();
-                            }
-                            information_color_background = status_of_information.substr(0, 2);
-                            information = status_of_information.erase(0,3);
-                        }
+                            aux_information = "";
+                            information = "";
 
+                            information_color_background = status_of_information.substr(0, 2);
+                            //status_of_information.erase(0,3);
+                            if (status_of_information[1] == '0')
+                            {
+                                interface.isLightCurrentPlayer() ? players.first.setFault() : players.second.setFault();
+                                information = getCurrentPlayer(interface.isLightCurrentPlayer()) + string(" player the command: ") + status_of_information.erase(0,3);
+                                aux_information = " is a Invalid Movement - Please reapet command";
+                            }
+                            else if (status_of_information[1] == '1')
+                            {
+                                information = getCurrentPlayer(interface.isLightCurrentPlayer()) + string(" player the command: " + status_of_information.erase(0,3));
+                                aux_information = string(" is running");
+                            }
+                            else if (status_of_information[1] == '4')
+                            {
+                                information = getCurrentPlayer(interface.isLightCurrentPlayer()) + string(" player the command: " + status_of_information.erase(0,3));
+                                aux_information = " \"Move\" to execute or \"Cancel\" to repeat command";
+                            }
+                            else if (status_of_information[1] == '5'){
+                                information = string("Waiting for the ") + player + "  player\'s command";
+                                aux_information = "";
+                            }
+                            else if (status_of_information[1] == '3'){
+                                information = string("Listening for the ") + player +" player\'s command";
+                                aux_information = "";
+                            }
+                            
+                            information += aux_information;
+                        }
                         char write_data[5] = "None";
                         strncpy(data, write_data, SHM_SIZE);
                     }
