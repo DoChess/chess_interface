@@ -136,7 +136,7 @@ void Interface::controlTime(string statusOfInformation,
 void Interface::drawBackgroundInterface(string statusOfInformation){
   int* color = new int [4];
 
-  if(statusOfInformation == "32"){ // Yellow
+  if(statusOfInformation == "34"){ // Yellow
     color[3] = 255;
     color[2] = 255;
     color[1] = 0;

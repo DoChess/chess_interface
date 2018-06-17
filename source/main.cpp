@@ -15,7 +15,7 @@ int main( int argc, char* args[] )
 
     if( interface.initInterface() )
     {
-        while(qtd_matches<3){
+        while(qtd_matches<1){
             Player lightPlayer, darkPlayer;
             pair<Player, Player> players (lightPlayer, darkPlayer);
 
@@ -39,14 +39,13 @@ int main( int argc, char* args[] )
                 {
                     string data_of_control_package(data);
                     if(data_of_control_package != "None"){
-                        char teste[5] = "None";
+                        char write_data[5] = "None";
                         status_of_information = data_of_control_package;
-                        strncpy(data, teste, SHM_SIZE);
+                        strncpy(data, write_data, SHM_SIZE);
                     }
                     if (status_of_information[0] == '1')
                     {
                         interface.controlTime(status_of_information, &players, &interface);
-                        status_of_information = "None";
                     }
                     else if (status_of_information[0] == '3')
                     {
@@ -78,6 +77,7 @@ int main( int argc, char* args[] )
                 interface.renderElements();
                 SDL_RenderPresent( interface.gRenderer );
             }
+
             qtd_matches++;
             cout << "Next game" << endl;
             lightPlayer.~Player();
