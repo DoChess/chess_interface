@@ -54,7 +54,7 @@ int main( int argc, char* args[] )
           if(data_of_control_package != "None"){
             status_of_information = data_of_control_package;
 
-            char write_data[5] = "None";
+            char none[5] = "None";
             if (status_of_information[0] == '1' and status_of_information!="15")
             {
               if(status_of_information == "11"){
@@ -62,6 +62,15 @@ int main( int argc, char* args[] )
                 first_information = ".";
                 information = string("Waiting for the ");
                 second_information = getCurrentPlayer( interface.isLightCurrentPlayer()) + "  player\'s command";
+              }
+              else if (status_of_information =="17") {
+                information = getCurrentPlayer(interface.isLightCurrentPlayer()) + string(" player victory");
+                first_information = "-";
+                second_information = "Checkmate";
+                interface.controlTime("15", &players, &interface);
+                endGame.second = "None";
+                strncpy(data, none, SHM_SIZE);
+                break;
               }
               interface.controlTime(status_of_information, &players, &interface);
               status_of_information = "None";
@@ -102,7 +111,7 @@ int main( int argc, char* args[] )
               }
             }
             if(status_of_information != "15")
-              strncpy(data, write_data, SHM_SIZE);
+              strncpy(data, none, SHM_SIZE);
           }
         }
 
