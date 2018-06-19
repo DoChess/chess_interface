@@ -131,6 +131,7 @@ void Interface::controlTime(string statusOfInformation,
         players->first.timer.start();
         players->second.timer.start();
         players->second.timer.pause();
+        statusGameText = "../assets/imgs/pause.png";
     }
     else if(statusOfInformation == "15")
     {
@@ -257,7 +258,7 @@ bool Interface::loadMedias()
     bool success = true;
 
     this->gFontTimer = TTF_OpenFont( "../assets/font/lazy.ttf", 120 );
-    this->gFont = TTF_OpenFont( "../assets/font/lemon.ttf", 50 ); // 60
+      this->gFont = TTF_OpenFont( "../assets/font/poter.ttf", 45 ); // 60
 
     if( this->gFont == NULL )
     {

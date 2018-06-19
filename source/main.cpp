@@ -40,8 +40,6 @@ int main( int argc, char* args[] )
       bool quit = false;
       SDL_Event e;
 
-      cout << "O start game tem valor: " << start_game <<  endl;
-
       attach_memory();
       while( !quit )
       {
@@ -55,22 +53,22 @@ int main( int argc, char* args[] )
           string data_of_control_package(data);
           if(data_of_control_package != "None"){
             status_of_information = data_of_control_package;
-            cout << "Entrou aqui " << getCurrentPlayer(interface.isLightCurrentPlayer()) << endl;
+
             char write_data[5] = "None";
             if (status_of_information[0] == '1' and status_of_information!="15")
             {
               if(status_of_information == "11"){
                 start_game = true;
+                first_information = ".";
                 information = string("Waiting for the ");
                 second_information = getCurrentPlayer( interface.isLightCurrentPlayer()) + "  player\'s command";
-                first_information = "-";
               }
               interface.controlTime(status_of_information, &players, &interface);
               status_of_information = "None";
             }
             else if (status_of_information[0] == '3' and start_game == true)
             {
-              information = "-";
+              information = ".";
 
               information_color_background = status_of_information.substr(0, 2);
               if (status_of_information[1] == '0')
@@ -95,12 +93,12 @@ int main( int argc, char* args[] )
               else if (status_of_information[1] == '5'){
                 information = string("Waiting for the ");
                 second_information = getCurrentPlayer( interface.isLightCurrentPlayer()) + "  player\'s command";
-                first_information = "-";
+                first_information = ".";
               }
               else if (status_of_information[1] == '3'){
                 information = string("Listening to the command of the ");
                 second_information = getCurrentPlayer( interface.isLightCurrentPlayer()) +" player";
-                first_information = "-";
+                first_information = ".";
               }
             }
             if(status_of_information != "15")
