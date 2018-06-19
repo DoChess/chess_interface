@@ -17,6 +17,8 @@ int main( int argc, char* args[] )
     short qtd_matches = 0;
     string initial_information = "Welcome to chess game";
     string information = initial_information;
+    string first_information = "-";
+    string second_information = "-";
     initial_information = information;
 
     if( interface.initInterface() )
@@ -30,7 +32,6 @@ int main( int argc, char* args[] )
             string status_of_information = "None";
             string information_color_background = "None";
             string player = "White";
-            string aux_information = "";
 
             bool quit = false;
             SDL_Event e;
@@ -55,36 +56,38 @@ int main( int argc, char* args[] )
                         }
                         else if (status_of_information[0] == '3')
                         {
-                            aux_information = "";
-                            information = "";
+                            information = "-";
 
                             information_color_background = status_of_information.substr(0, 2);
-                            //status_of_information.erase(0,3);
                             if (status_of_information[1] == '0')
                             {
                                 interface.isLightCurrentPlayer() ? players.first.setFault() : players.second.setFault();
-                                information = getCurrentPlayer(interface.isLightCurrentPlayer()) + string(" player the command: ") + status_of_information.erase(0,3);
-                                aux_information = " is a Invalid Movement - Please reapet command";
+                                first_information = getCurrentPlayer(interface.isLightCurrentPlayer()) + string(" player the command: ");
+                                information = status_of_information.erase(0,3);
+                                second_information = " is a Invalid Movement";
                             }
                             else if (status_of_information[1] == '1')
                             {
-                                information = getCurrentPlayer(interface.isLightCurrentPlayer()) + string(" player the command: " + status_of_information.erase(0,3));
-                                aux_information = string(" is running");
+                                first_information = getCurrentPlayer(interface.isLightCurrentPlayer()) + string(" player the command: ");
+                                information = status_of_information.erase(0,3);
+                                second_information = string(" is running");
                             }
                             else if (status_of_information[1] == '4')
                             {
-                                information = getCurrentPlayer(interface.isLightCurrentPlayer()) + string(" player the command: " + status_of_information.erase(0,3));
-                                aux_information = " \"Move\" to execute or \"Cancel\" to repeat command";
+                                first_information = getCurrentPlayer(interface.isLightCurrentPlayer()) + string(" player the command: ");
+                                information = status_of_information.erase(0,3);
+                                second_information = " \"Move\" or \"Repeat\"?";
                             }
                             else if (status_of_information[1] == '5'){
-                                information = string("Waiting for the ") + player + "  player\'s command";
-                                aux_information = "";
+                                information = string("Waiting for the ");
+                                second_information = getCurrentPlayer( interface.isLightCurrentPlayer()) + "  player\'s command";
+                                first_information = "-";
                             }
                             else if (status_of_information[1] == '3'){
-                                information = string("Listening for the ") + player +" player\'s command";
-                                aux_information = "";
+                                information = string("Listening to the command of the ");
+                                second_information = getCurrentPlayer( interface.isLightCurrentPlayer()) +" player";
+                                first_information = "-";
                             }
-                            information += aux_information;
                         }
                         char write_data[5] = "None";
                         strncpy(data, write_data, SHM_SIZE);
@@ -104,8 +107,8 @@ int main( int argc, char* args[] )
                 }
 
                 interface.setInformation( information );
-                interface.setSecondInformation( "information" );
-                interface.setFirstInformation( "fdsafdsafdsafdsainformation" );
+                interface.setSecondInformation( second_information );
+                interface.setFirstInformation( first_information );
                 interface.drawBackgroundInterface( information_color_background );
 
                 interface.renderElements();

@@ -257,7 +257,7 @@ bool Interface::loadMedias()
     bool success = true;
 
     this->gFontTimer = TTF_OpenFont( "../assets/font/lazy.ttf", 120 );
-    this->gFont = TTF_OpenFont( "../assets/font/lemon.ttf", 30 ); // 60
+    this->gFont = TTF_OpenFont( "../assets/font/lemon.ttf", 50 ); // 60
 
     if( this->gFont == NULL )
     {
@@ -325,9 +325,9 @@ void Interface::renderElements(){
     short lightFailureWidth = (SCREEN_WIDTH - playerFailuresLightTexture.getWidth()*1) / 2.4;
     short darkFailureWidth = SCREEN_WIDTH - playerTimeDarkTexture.getWidth() - 55;
 
-    gInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 10), this->gRenderer );
-    gFirstInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 4.5), this->gRenderer );
-    gSecondInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 2.8), this->gRenderer );
+    gFirstInfoTexture.render( ( SCREEN_WIDTH - gFirstInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gFirstInfoTexture.getHeight()) / 10), this->gRenderer );
+    gInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 4.5), this->gRenderer );
+    gSecondInfoTexture.render( ( SCREEN_WIDTH - gSecondInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gSecondInfoTexture.getHeight()) / 2.8), this->gRenderer );
 
     playerTimeDarkTexture.render( darkWidth, timeHeight , this->gRenderer );
     playerFailuresDarkTexture.render( darkFailureWidth, failureHeight, this->gRenderer );
