@@ -31,6 +31,8 @@ public:
     LTexture playerFailuresLightTexture;
     LTexture gStatusGameTexture;
     LTexture gInfoTexture;
+    LTexture gFirstInfoTexture;
+    LTexture gSecondInfoTexture;
     LTexture gSpriteSheetTexture;
     
     bool initLibsSDL();
@@ -41,6 +43,12 @@ public:
     
     void setInformation(string info);
     string getInformation();
+    
+    void setFirstInformation(string info);
+    string getFirstInformation();
+
+    void setSecondInformation(string info);
+    string getSecondInformation();
 
     void setStatusGame(string status);
     string getStatusGame();
@@ -55,6 +63,8 @@ public:
     void isGameOver(pair<Player, Player>* players, pair<bool, string>* gameOver);
 
 private:
+    string secondInformationGame;
+    string firstInformationGame;
     string informationGame;
     string statusGame;
     bool lightCurrentPlayer;

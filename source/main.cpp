@@ -84,7 +84,6 @@ int main( int argc, char* args[] )
                                 information = string("Listening for the ") + player +" player\'s command";
                                 aux_information = "";
                             }
-                            
                             information += aux_information;
                         }
                         char write_data[5] = "None";
@@ -105,6 +104,8 @@ int main( int argc, char* args[] )
                 }
 
                 interface.setInformation( information );
+                interface.setSecondInformation( "information" );
+                interface.setFirstInformation( "fdsafdsafdsafdsainformation" );
                 interface.drawBackgroundInterface( information_color_background );
 
                 interface.renderElements();

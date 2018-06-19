@@ -5,6 +5,9 @@ using namespace std;
 Interface::Interface()
 {
     informationGame = "Chess Game";
+    firstInformationGame = "Chess Game";
+    secondInformationGame = "Chessfdsa  Game";
+
     statusGame = "../assets/imgs/play.png";
     lightCurrentPlayer = true;
     gWindow = NULL;
@@ -25,7 +28,10 @@ Interface::~Interface()
 
     gStatusGameTexture.free();
     gSpriteSheetTexture.free();
+    
     gInfoTexture.free();
+    gSecondInfoTexture.free();
+    gFirstInfoTexture.free();
 
     SDL_DestroyTexture( this->gTexture );
     this->gTexture = NULL;
@@ -76,6 +82,26 @@ void Interface::setInformation(string info)
 string Interface::getInformation()
 {
     return informationGame;
+}
+
+void Interface::setFirstInformation(string info)
+{
+    firstInformationGame = info;
+}
+
+string Interface::getFirstInformation()
+{
+    return firstInformationGame;
+}
+
+void Interface::setSecondInformation(string info)
+{
+    secondInformationGame = info;
+}
+
+string Interface::getSecondInformation()
+{
+    return secondInformationGame;
 }
 
 void Interface::controlTime(string statusOfInformation,
@@ -248,8 +274,6 @@ bool Interface::loadMedias()
     return success;
 }
 
-
-
 void Interface::updateElements(pair<Player, Player> *players){
     SDL_Color textColorBlack = { 0, 0, 0, 255 };
     SDL_Color textColorWhite = { 255, 255, 255, 255 };
@@ -270,7 +294,16 @@ void Interface::updateElements(pair<Player, Player> *players){
     {
         printf( "Unable to render time texture!\n" );
     }
+
     if( !gInfoTexture.loadFromRenderedText( this->getInformation(), textColorBlack, this->gRenderer, this->gFont ) )
+    {
+        printf( "Unable to render information texture!\n" );
+    }
+    if( !gFirstInfoTexture.loadFromRenderedText( this->getFirstInformation(), textColorBlack, this->gRenderer, this->gFont ) )
+    {
+        printf( "Unable to render information texture!\n" );
+    }
+    if( !gSecondInfoTexture.loadFromRenderedText( this->getSecondInformation(), textColorBlack, this->gRenderer, this->gFont ) )
     {
         printf( "Unable to render information texture!\n" );
     }
@@ -292,7 +325,9 @@ void Interface::renderElements(){
     short lightFailureWidth = (SCREEN_WIDTH - playerFailuresLightTexture.getWidth()*1) / 2.4;
     short darkFailureWidth = SCREEN_WIDTH - playerTimeDarkTexture.getWidth() - 55;
 
-    gInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 4), this->gRenderer );
+    gInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 10), this->gRenderer );
+    gFirstInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 4.5), this->gRenderer );
+    gSecondInfoTexture.render( ( SCREEN_WIDTH - gInfoTexture.getWidth() ) / 2, ((SCREEN_HEIGHT - gInfoTexture.getHeight()) / 2.8), this->gRenderer );
 
     playerTimeDarkTexture.render( darkWidth, timeHeight , this->gRenderer );
     playerFailuresDarkTexture.render( darkFailureWidth, failureHeight, this->gRenderer );
@@ -300,7 +335,7 @@ void Interface::renderElements(){
     playerFailuresLightTexture.render( lightFailureWidth, failureHeight, this->gRenderer );
     playerTimeLightTexture.render( lightWidth , timeHeight, this->gRenderer );
 
-    gStatusGameTexture.render( (SCREEN_WIDTH - gStatusGameTexture.getWidth()) / 2, (SCREEN_HEIGHT - gStatusGameTexture.getHeight()) / 16, this->gRenderer );
+    gStatusGameTexture.render( (SCREEN_WIDTH - gStatusGameTexture.getWidth()) / 20, (SCREEN_HEIGHT - gStatusGameTexture.getHeight()) / 20, this->gRenderer );
 }
 
 bool Interface::initInterface(){
